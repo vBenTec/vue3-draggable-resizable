@@ -13,6 +13,7 @@
       h: {{ h }}<button @click="h += 10">+</button><button @click="h -= 10">-</button>
     </div>
     <div>active:{{ active }}<br /></div>
+
     <div class="parent">
       <Vue3DraggableResizable
         :initW="40"
@@ -72,17 +73,21 @@ export default defineComponent({
   },
 });
 </script>
-<style lang="less" scoped>
+
+<style scoped>
 .parent {
   width: 300px;
   height: 300px;
-  // position: absolute;
-  // top: 100px;
-  // left: 200px;
+
+  /*
+    position: absolute;
+    top: 100px;
+    left: 200px;
+  */
   position: relative;
   border: 1px solid #000;
   user-select: none;
-  ::v-deep {
+  :deep() {
     .vdr-container {
       border-color: #999;
     }

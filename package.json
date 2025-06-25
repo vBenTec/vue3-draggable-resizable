@@ -15,11 +15,8 @@
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "@vitejs/plugin-vue": "^6.0.0",
-    "@vue/babel-plugin-jsx": "^1.0.0-rc.3",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0-0",
-    "less": "^3.0.4",
-    "less-loader": "^5.0.0",
     "typescript": "~3.9.3",
     "vite": "^7.0.0",
     "vue": "^3.0.0"
@@ -34,12 +31,10 @@
   },
   "homepage": "https://github.com/a7650/vue3-draggable-resizable",
   "keywords": [
-    "vue3",
+    "vue",
     "component",
     "draggable",
-    "resizable",
-    "拖拽",
-    "吸附对齐"
+    "resizable"
   ],
   "main": "src/index.js",
   "module": "src/index.js",
