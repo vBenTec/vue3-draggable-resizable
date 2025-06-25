@@ -12,14 +12,18 @@
     "build:dts": "tsc src/index.html --declaration --declarationDir typings"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.33.0",
-    "@typescript-eslint/parser": "^2.33.0",
+    "@eslint/js": "^9.29.0",
+    "@types/node": "^24.0.4",
+    "@typescript-eslint/eslint-plugin": "^8.35.0",
+    "@typescript-eslint/parser": "^8.35.0",
     "@vitejs/plugin-vue": "^6.0.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0-0",
-    "typescript": "~3.9.3",
+    "eslint": "^9.29.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-vue": "^10.2.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.35.0",
     "vite": "^7.0.0",
-    "vue": "^3.0.0"
+    "vue": "^3.5.17"
   },
   "license": "MIT",
   "repository": {
