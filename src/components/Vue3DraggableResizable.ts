@@ -223,6 +223,7 @@ const VueDraggableResizable = defineComponent({
     const { width, height } = getElSize(this.containerRef)
     this.setWidth(this.initW === null ? this.w || width : this.initW)
     this.setHeight(this.initH === null ? this.h || height : this.initH)
+
     if (this.containerProvider) {
       this.containerProvider.updatePosition(this.id, {
         x: this.left,

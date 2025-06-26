@@ -1,52 +1,84 @@
 <template>
   <div id="app">
     <div>
-      x:{{ state.x }} <button @click="state.x += 10">+</button><button @click="state.x -= 10">-</button>
+      x:{{ state.x }}
+      <button @click="state.x += 10">+</button>
+      <button @click="state.x -= 10">-</button>
     </div>
     <div>
-      y:{{ state.y }}<button @click="state.y += 10">+</button><button @click="state.y -= 10">-</button>
+      y:{{ state.y }}
+      <button @click="state.y += 10">+</button>
+      <button @click="state.y -= 10">-</button>
     </div>
     <div>
-      w:{{ state.w }}<button @click="state.w += 10">+</button><button @click="state.w -= 10">-</button>
+      w:{{ state.w }}
+      <button @click="state.w += 10">+</button>
+      <button @click="state.w -= 10">-</button>
     </div>
     <div>
-      h: {{ state.h }}<button @click="state.h += 10">+</button><button @click="state.h -= 10">-</button>
+      h: {{ state.h }}
+      <button @click="state.h += 10">+</button>
+      <button @click="state.h -= 10">-</button>
     </div>
-    <div>active:{{ state.active }}<br /></div>
+    <div>active:{{ state.active }}<br/></div>
 
     <div class="parent">
       <Vue3DraggableResizable
-        :initW="40"
-        :initH="80"
-        v-model:x="state.x"
-        v-model:y="state.y"
-        v-model:w="state.w"
-        v-model:h="state.h"
-        v-model:active="state.active"
-        :draggable="true"
-        :resizable="true"
-        :parent="true"
-        :disabledX="false"
-        :disabledW="false"
-        :disabledH="false"
-        :disabledY="false"
-        :lockAspectRatio="false"
-        classNameHandle="my-handle"
-        @activated="print('activated')"
-        @deactivated="print('deactivated')"
-        @drag-start="print('drag-start', $event)"
-        @resize-start="print('resize-start', $event)"
-        @dragging="print('dragging', $event)"
-        @resizing="print('resizing', $event)"
-        @drag-end="print('drag-end', $event)"
-        @resize-end="print('resize-end', $event)"
+          :initW="40"
+          :initH="80"
+          v-model:x="state.x"
+          v-model:y="state.y"
+          v-model:w="state.w"
+          v-model:h="state.h"
+          v-model:active="state.active"
+          :draggable="true"
+          :resizable="true"
+          :parent="true"
+          :disabledX="false"
+          :disabledW="false"
+          :disabledH="false"
+          :disabledY="false"
+          :lockAspectRatio="true"
+          classNameHandle="my-handle"
+          @activated="print('activated')"
+          @deactivated="print('deactivated')"
+          @drag-start="print('drag-start', $event)"
+          @resize-start="print('resize-start', $event)"
+          @dragging="print('dragging', $event)"
+          @resizing="print('resizing', $event)"
+          @drag-end="print('drag-end', $event)"
+          @resize-end="print('resize-end', $event)"
       >
         This is a test example
       </Vue3DraggableResizable>
     </div>
 
-    <div>
-<!--      <DraggableResizable/>-->
+    <div class="parent">
+      <DraggableResizable :initW="40"
+                          :initH="80"
+                          v-model:x="state.x"
+                          v-model:y="state.y"
+                          v-model:w="state.w"
+                          v-model:h="state.h"
+                          v-model:active="state.active"
+                          :draggable="true"
+                          :resizable="true"
+                          :parent="true"
+                          :disabledX="false"
+                          :disabledW="false"
+                          :disabledH="false"
+                          :disabledY="false"
+                          :lockAspectRatio="true"
+                          @activated="print('activated')"
+                          @deactivated="print('deactivated')"
+                          @drag-start="print('drag-start', $event)"
+                          @resize-start="print('resize-start', $event)"
+                          @dragging="print('dragging', $event)"
+                          @resizing="print('resizing', $event)"
+                          @drag-end="print('drag-end', $event)"
+                          @resize-end="print('resize-end', $event)">
+        Example ist a test
+      </DraggableResizable>
     </div>
   </div>
 </template>
@@ -54,7 +86,7 @@
 <script setup lang="ts">
 import Vue3DraggableResizable from "./components/Vue3DraggableResizable";
 // import DraggableContainer from "./components/DraggableContainer";
-// import DraggableResizable from "./components/DraggableResizable/index.vue";
+import DraggableResizable from "./components/DraggableResizable/index.vue";
 import {reactive} from "vue";
 
 const state = reactive({
@@ -82,6 +114,7 @@ const print = (msg: string, event?: Event) => {
   position: relative;
   border: 1px solid #000;
   user-select: none;
+
   :deep() {
     .vdr-container {
       border-color: #999;
