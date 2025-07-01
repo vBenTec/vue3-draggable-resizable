@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import {ContainerProvider, GetPositionStore, ResizingHandle, SetMatchedLine, UpdatePosition} from "@/components/types";
-import {computed, inject, ref, Ref, toRef, useTemplateRef, onMounted, nextTick} from "vue";
+import {computed, inject, ref, Ref, toRef, useTemplateRef, onMounted, nextTick, watch} from "vue";
 import {
   initDraggableContainer,
   initLimitSizeAndMethods,
@@ -12,6 +12,9 @@ import {
 } from "@/components/hooks";
 import {filterHandles, getElSize, IDENTITY} from "@/components/utils";
 import {ALL_HANDLES} from "@/components/Vue3DraggableResizable";
+import {useParentSize} from "@/composables/useParent";
+import {useResizeHandle} from "@/composables/useResizeHandle";
+import {useIdentity} from "@/components/DraggableContainer/useIdentity";
 
 interface Props {
   initW?: number
@@ -35,29 +38,20 @@ interface Props {
   lockAspectRatio?: boolean
 }
 
-const props = defineProps<Props>()
-
-const {
-  handles = ALL_HANDLES,
-  classNameActive = 'active',
-  classNameHandle = 'handle',
-  classNameResizing = 'resizing',
-  classNameDragging = 'dragging',
-  classNameDraggable = 'draggable',
-  classNameResizable = 'resizable',
-  minW = 20,
-  minH = 20,
-  parent = false,
-  draggable = true,
-  resizable = true,
-} = props
-
-const w = defineModel<number>('w', {default: 0})
-const h = defineModel<number>('h', {default: 0})
-const x = defineModel<number>('x', {default: 0})
-const y = defineModel<number>('y', {default: 0})
-
-const active = defineModel<boolean>('active', {default: false})
+const props = withDefaults(defineProps<Props>(),{
+  handles : ALL_HANDLES,
+  classNameActive : 'active',
+  classNameHandle : 'handle',
+  classNameResizing : 'resizing',
+  classNameDragging : 'dragging',
+  classNameDraggable : 'draggable',
+  classNameResizable : 'resizable',
+  minW : 20,
+  minH : 20,
+  parent : false,
+  draggable : true,
+  resizable : true,
+})
 
 const emit = defineEmits<{
   activated: []
@@ -70,10 +64,45 @@ const emit = defineEmits<{
   'resize-end': [Event]
 }>()
 
-const containerProps = initState(props, emit)
-const {dragging, resizing, enable, left, setWidth, setHeight, id, width, height, top} = containerProps
 
-const provideIdentity = inject('identity')
+const width = defineModel<number>('w', { default: (props) => props.initW ?? 0} )
+const height = defineModel<number>('h', { default: (props) => props.initH ?? 0} )
+const x = defineModel<number>('x', { default: (props) => props.x ?? 0} )
+const y = defineModel<number>('y', { default: (props) => props.y ?? 0} )
+
+const active = defineModel<boolean>('active', {default: (props) => props.active})
+
+
+const containerProps = initState(props, emit)
+
+const {dragging, resizing, enable, left, setWidth, setHeight, id,  top, setEnable} = containerProps
+
+watch(enable, (newVal, oldVal) => {
+  active.value = newVal
+  if (!oldVal && newVal) {
+    emit('activated')
+  } else if (oldVal && !newVal) {
+    emit('deactivated')
+  }
+})
+
+watch(
+    () => active,
+    (newVal) => {
+      setEnable(newVal)
+    }
+)
+
+const resizingHandle = ref<ResizingHandle>('')
+const resizingMaxWidth = ref<number>(Infinity)
+const resizingMaxHeight = ref<number>(Infinity)
+const resizingMinWidth = ref<number>(props.minW)
+const resizingMinHeight = ref<number>(props.minH)
+
+const aspectRatio = computed(() => height.value / width.value)
+
+
+const provideIdentity = useIdentity()
 
 let containerProvider: ContainerProvider | null = null
 
@@ -91,7 +120,9 @@ if (provideIdentity === IDENTITY) {
 
 const containerRef = useTemplateRef('container')
 
-const parentSize = initParent(containerRef)
+// const parentSize = initParent(containerRef)
+const parentSize = useParentSize(containerRef)
+
 const limitProps = initLimitSizeAndMethods(
     props,
     parentSize,
@@ -108,15 +139,15 @@ initDraggableContainer(
     parentSize
 )
 
-const {resizeHandleDown} = initResizeHandle(
+const { resizeHandleDown } = useResizeHandle(
     containerProps,
     limitProps,
     parentSize,
     props,
     emit
 )
-
-watchProps(props, limitProps)
+//
+// watchProps(props, limitProps)
 
 const style = computed(() =>
     ({
@@ -128,15 +159,15 @@ const style = computed(() =>
 )
 
 const handlesFiltered = computed(() =>
-    props.resizable ? filterHandles(handles) : []
+    props.resizable ? filterHandles(props.handles) : []
 )
 
 const containerClass = computed(() => ({
-  [classNameActive]: enable.value,
-  [classNameDragging]: dragging.value,
-  [classNameResizing]: resizing.value,
-  [classNameDraggable]: props.draggable,
-  [classNameResizable]: props.resizable
+  // [classNameActive]: enable.value,
+  // [classNameDragging]: dragging.value,
+  // [classNameResizing]: resizing.value,
+  [props.classNameDraggable]: props.draggable,
+  [props.classNameResizable]: props.resizable
 }))
 
 onMounted(() => {
@@ -144,39 +175,40 @@ onMounted(() => {
 
   containerRef.value.ondragstart = () => false
 
-  const {width: elWidth, height: elHeight} = getElSize(containerRef.value)
+  // const {width: elWidth, height: elHeight} = getElSize(containerRef.value)
 
-  const initialWidth = !props.initW ? w.value || elWidth : props.initW;
-  const initialHeight = !props.initH ? h.value || elHeight : props.initH;
+  // const initialWidth = !props.initW ? w.value || elWidth : props.initW;
+  // const initialHeight = !props.initH ? h.value || elHeight : props.initH;
 
-  setWidth(initialWidth  ? initialWidth : minW);
-  setHeight(initialHeight   ? initialHeight : minH);
 
-  if (containerProvider) {
-    containerProvider.updatePosition(id, {
-      x: left.value,
-      y: top.value,
-      w: width.value,
-      h: height.value
-    })
-  }
+  // setWidth(initialWidth ? initialWidth : minW)
+  // setHeight(initialHeight ? initialHeight : minH);
+
+  // if (containerProvider) {
+  //   containerProvider.updatePosition(id, {
+  //     x: left.value,
+  //     y: top.value,
+  //     w: width.value,
+  //     h: height.value
+  //   })
+  // }
 })
 
-defineExpose({
-  containerRef,
-  containerProvider,
-  ...containerProps,
-  ...parentSize,
-  ...limitProps,
-  resizeHandleDown
-})
+// defineExpose({
+//   containerRef,
+//   containerProvider,
+//   ...containerProps,
+//   ...parentSize,
+//   ...limitProps,
+//   resizeHandleDown
+// })
 </script>
 
 <template>
   <div ref="container" class="vdr-container" :class="containerClass" :style="style">
     <slot/>
     <div v-for="item in handlesFiltered" :key="item" @mousedown.passive="resizeHandleDown($event, item)"
-         @touchstart.passive="resizeHandleDown($event, item)" :style="{ display: enable ? 'block' : 'none' }"
+         @touchstart.passive="resizeHandleDown($event, item)" :style="{ display: true ? 'block' : 'none' }"
          class="vdr-handle"
          :class="[`vdr-handle-${item}`, classNameHandle, `${classNameHandle}-${item}`]"/>
   </div>

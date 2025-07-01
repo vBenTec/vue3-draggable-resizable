@@ -106,6 +106,7 @@ export function initState(props: any, emit: any) {
 export function initParent(containerRef: Ref<HTMLElement | undefined>) {
   const parentWidth = ref(0)
   const parentHeight = ref(0)
+
   onMounted(() => {
     if (containerRef.value && containerRef.value.parentElement) {
       const { width, height } = getElSize(containerRef.value.parentElement)

@@ -94,6 +94,7 @@ const state = reactive({
   y: 100,
   h: 100,
   w: 100,
+  active: false,
 })
 
 const print = (msg: string, event?: Event) => {
