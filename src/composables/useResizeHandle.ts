@@ -5,18 +5,11 @@ import {initLimitSizeAndMethods, initParent, initState} from "@/components/hooks
 
 type HandleEvent = MouseEvent | TouchEvent
 
-
 const DOWN_HANDLES: (keyof HTMLElementEventMap)[] = ['mousedown', 'touchstart']
 const UP_HANDLES: (keyof HTMLElementEventMap)[] = ['mouseup', 'touchend']
 const MOVE_HANDLES: (keyof HTMLElementEventMap)[] = ['mousemove', 'touchmove']
 
-function getPosition(e: HandleEvent) {
-    if ('touches' in e) {
-        return [e.touches[0].pageX, e.touches[0].pageY]
-    } else {
-        return [e.pageX, e.pageY]
-    }
-}
+const getPosition = (e: HandleEvent) =>  'touches' in e ? [e.touches[0].pageX, e.touches[0].pageY] : [e.pageX, e.pageY]
 
 export const useResizeHandle = (
     containerProps: ReturnType<typeof initState>,
@@ -158,10 +151,13 @@ export const useResizeHandle = (
         lstH = height.value
         lstX = left.value
         lstY = top.value
+
         const lstPagePosition = getPosition(e)
+
         lstPageX = lstPagePosition[0]
         lstPageY = lstPagePosition[1]
         tmpAspectRatio = aspectRatio.value
+
         emit('resize-start', {
             x: left.value,
             y: top.value,

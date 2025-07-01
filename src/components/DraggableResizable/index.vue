@@ -15,30 +15,9 @@ import {ALL_HANDLES} from "@/components/Vue3DraggableResizable";
 import {useParentSize} from "@/composables/useParent";
 import {useResizeHandle} from "@/composables/useResizeHandle";
 import {useIdentity} from "@/components/DraggableContainer/useIdentity";
+import {DraggableResizableProps} from "@/components/DraggableResizable/types";
 
-interface Props {
-  initW?: number
-  initH?: number
-  draggable?: boolean
-  resizable?: boolean
-  disabledX?: boolean
-  disabledY?: boolean
-  disabledW?: boolean
-  disabledH?: boolean
-  minW?: number
-  minH?: number
-  parent?: boolean
-  handles?: ResizingHandle[]
-  classNameDraggable?: string
-  classNameResizable?: string
-  classNameDragging?: string
-  classNameResizing?: string
-  classNameActive?: string
-  classNameHandle?: string
-  lockAspectRatio?: boolean
-}
-
-const props = withDefaults(defineProps<Props>(),{
+const props = withDefaults(defineProps<DraggableResizableProps>(),{
   handles : ALL_HANDLES,
   classNameActive : 'active',
   classNameHandle : 'handle',
@@ -121,7 +100,7 @@ if (provideIdentity === IDENTITY) {
 const containerRef = useTemplateRef('container')
 
 // const parentSize = initParent(containerRef)
-const parentSize = useParentSize(containerRef)
+const parentSize = useParentSize(containerRef, {enabled: toRef(props, 'parent')})
 
 const limitProps = initLimitSizeAndMethods(
     props,
