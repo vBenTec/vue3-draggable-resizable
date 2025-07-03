@@ -26,39 +26,39 @@ export function useState<T>(initialState: T): [Ref<T>, (value: T) => T] {
 }
 
 export function initState(props: any, emit: any) {
-  const [width, setWidth] = useState<number>(props.initW)
-  const [height, setHeight] = useState<number>(props.initH)
-  const [left, setLeft] = useState<number>(props.x)
-  const [top, setTop] = useState<number>(props.y)
-  const [enable, setEnable] = useState<boolean>(props.active)
-  const [dragging, setDragging] = useState<boolean>(false)
-  const [resizing, setResizing] = useState<boolean>(false)
-  const [resizingHandle, setResizingHandle] = useState<ResizingHandle>('')
-  const [resizingMaxWidth, setResizingMaxWidth] = useState<number>(Infinity)
-  const [resizingMaxHeight, setResizingMaxHeight] = useState<number>(Infinity)
-  const [resizingMinWidth, setResizingMinWidth] = useState<number>(props.minW)
-  const [resizingMinHeight, setResizingMinHeight] = useState<number>(props.minH)
-  const aspectRatio = computed(() => height.value / width.value)
+  const [width, setWidth] = useState<number>(props.initW) //
+  const [height, setHeight] = useState<number>(props.initH) //
+  const [left, setLeft] = useState<number>(props.x) //
+  const [top, setTop] = useState<number>(props.y) //
+  const [enable, setEnable] = useState<boolean>(props.active) //
+  const [dragging, setDragging] = useState<boolean>(false) //
+  const [resizing, setResizing] = useState<boolean>(false)//
+  const [resizingHandle, setResizingHandle] = useState<ResizingHandle>('') //
+  const [resizingMaxWidth, setResizingMaxWidth] = useState<number>(Infinity) //
+  const [resizingMaxHeight, setResizingMaxHeight] = useState<number>(Infinity) //
+  const [resizingMinWidth, setResizingMinWidth] = useState<number>(props.minW) //
+  const [resizingMinHeight, setResizingMinHeight] = useState<number>(props.minH) //
+  const aspectRatio = computed(() => height.value / width.value) //
   watch(
     width,
     (newVal) => {
       emit('update:w', newVal)
     },
     { immediate: true }
-  )
+  ) //
   watch(
     height,
     (newVal) => {
       emit('update:h', newVal)
     },
     { immediate: true }
-  )
+  ) //
   watch(top, (newVal) => {
     emit('update:y', newVal)
-  })
+  }) //
   watch(left, (newVal) => {
     emit('update:x', newVal)
-  })
+  })//
   watch(enable, (newVal, oldVal) => {
     emit('update:active', newVal)
     if (!oldVal && newVal) {
@@ -66,13 +66,13 @@ export function initState(props: any, emit: any) {
     } else if (oldVal && !newVal) {
       emit('deactivated')
     }
-  })
+  })//
   watch(
     () => props.active,
     (newVal: boolean) => {
       setEnable(newVal)
     }
-  )
+  )//
   return {
     id: getId(),
     width,

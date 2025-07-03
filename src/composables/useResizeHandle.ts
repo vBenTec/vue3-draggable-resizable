@@ -9,26 +9,17 @@ const DOWN_HANDLES: (keyof HTMLElementEventMap)[] = ['mousedown', 'touchstart']
 const UP_HANDLES: (keyof HTMLElementEventMap)[] = ['mouseup', 'touchend']
 const MOVE_HANDLES: (keyof HTMLElementEventMap)[] = ['mousemove', 'touchmove']
 
-const getPosition = (e: HandleEvent) =>  'touches' in e ? [e.touches[0].pageX, e.touches[0].pageY] : [e.pageX, e.pageY]
+const getPosition = (e: HandleEvent) => 'touches' in e ? [e.touches[0].pageX, e.touches[0].pageY] : [e.pageX, e.pageY]
 
 export const useResizeHandle = (
-    containerProps: ReturnType<typeof initState>,
-    limitProps: ReturnType<typeof initLimitSizeAndMethods>,
-    parentSize: ReturnType<typeof initParent>,
-    props: any,
-    emit: any
+    {width, height, x, y, aspectRatio, parentWidth, parentHeight,  minH, minW},
+    {resizing, handles ,resizingHandle, resizingMaxWidth, resizingMinHeight, resizingMaxHeight, resizingMinWidth },
+    {setWidth, setHeight, setLeft, setTop, emit},
+    options: {
+        lockAspectRatio: boolean
+        resizable: boolean
+    }
 ) => {
-    const { setWidth, setHeight, setLeft, setTop } = limitProps
-    const { width, height, left, top, aspectRatio } = containerProps
-    const {
-        setResizing,
-        setResizingHandle,
-        setResizingMaxWidth,
-        setResizingMaxHeight,
-        setResizingMinWidth,
-        setResizingMinHeight
-    } = containerProps
-    const { parentWidth, parentHeight } = parentSize
 
     let lstW = 0
     let lstH = 0
@@ -41,7 +32,7 @@ export const useResizeHandle = (
     let horizontalOrientation = ''
 
     const documentElement = document.documentElement
-    
+
     const resizeHandleDrag = (e: HandleEvent) => {
         e.preventDefault()
         let [_pageX, _pageY] = getPosition(e)
@@ -49,7 +40,7 @@ export const useResizeHandle = (
         let deltaY = _pageY - lstPageY
         let _deltaX = deltaX
         let _deltaY = deltaY
-        if (props.lockAspectRatio) {
+        if (options.lockAspectRatio) {
             deltaX = Math.abs(deltaX)
             deltaY = deltaX * tmpAspectRatio
             if (verticalOrientation === 't') {
@@ -77,39 +68,39 @@ export const useResizeHandle = (
             setWidth(lstW + deltaX)
         }
         emit('resizing', {
-            x: left.value,
-            y: top.value,
+            x: x.value,
+            y: y.value,
             w: width.value,
             h: height.value
         })
     }
     const resizeHandleUp = () => {
         emit('resize-end', {
-            x: left.value,
-            y: top.value,
+            x: x.value,
+            y: y.value,
             w: width.value,
             h: height.value
         })
-        setResizingHandle('')
-        setResizing(false)
-        setResizingMaxWidth(Infinity)
-        setResizingMaxHeight(Infinity)
-        setResizingMinWidth(props.minW)
-        setResizingMinHeight(props.minH)
+        resizingHandle.value = ''
+        resizing.value = false
+        resizingMaxWidth.value = Infinity
+        resizingMaxHeight.value = Infinity
+        resizingMinWidth.value = minW
+        resizingMinHeight.value = minH
         // document.documentElement.removeEventListener('mousemove', resizeHandleDrag)
         // document.documentElement.removeEventListener('mouseup', resizeHandleUp)
         removeEvent(documentElement, MOVE_HANDLES, resizeHandleDrag)
         removeEvent(documentElement, UP_HANDLES, resizeHandleUp)
     }
     const resizeHandleDown = (e: HandleEvent, handleType: ResizingHandle) => {
-        if (!props.resizable) return
+        if (!options.resizable) return
         e.stopPropagation()
 
         console.log(e)
         console.log(handleType)
 
-        setResizingHandle(handleType)
-        setResizing(true)
+        resizingHandle.value = handleType
+        resizing.value = true
 
         verticalOrientation = handleType[0]
         horizontalOrientation = handleType[1]
@@ -123,34 +114,37 @@ export const useResizeHandle = (
                 horizontalOrientation = 'r'
             }
         }
-        let minHeight = props.minH as number
-        let minWidth = props.minW as number
+        let minHeight = minH.value
+        let minWidth = minW.value
+
         if (minHeight / minWidth > aspectRatio.value) {
             minWidth = minHeight / aspectRatio.value
         } else {
             minHeight = minWidth * aspectRatio.value
         }
-        setResizingMinWidth(minWidth)
-        setResizingMinHeight(minHeight)
+
+        resizingMinWidth.value = minWidth
+        resizingMinHeight.value = minHeight
+
         if (parent) {
             let maxHeight =
-                verticalOrientation === 't' ? top.value + height.value : parentHeight.value - top.value
+                verticalOrientation === 't' ? y.value + height.value : parentHeight.value - y.value
             let maxWidth =
-                horizontalOrientation === 'l' ? left.value + width.value : parentWidth.value - left.value
-            if (props.lockAspectRatio) {
+                horizontalOrientation === 'l' ? x.value + width.value : parentWidth.value - x.value
+            if (options.lockAspectRatio) {
                 if (maxHeight / maxWidth < aspectRatio.value) {
                     maxWidth = maxHeight / aspectRatio.value
                 } else {
                     maxHeight = maxWidth * aspectRatio.value
                 }
             }
-            setResizingMaxHeight(maxHeight)
-            setResizingMaxWidth(maxWidth)
+            resizingMaxWidth.value = maxWidth
+            resizingMaxHeight.value = maxHeight
         }
         lstW = width.value
         lstH = height.value
-        lstX = left.value
-        lstY = top.value
+        lstX = x.value
+        lstY = y.value
 
         const lstPagePosition = getPosition(e)
 
@@ -159,8 +153,8 @@ export const useResizeHandle = (
         tmpAspectRatio = aspectRatio.value
 
         emit('resize-start', {
-            x: left.value,
-            y: top.value,
+            x: x.value,
+            y: y.value,
             w: width.value,
             h: height.value
         })
@@ -176,7 +170,7 @@ export const useResizeHandle = (
         removeEvent(documentElement, MOVE_HANDLES, resizeHandleDrag)
     })
     const handlesFiltered = computed(() =>
-        props.resizable ? filterHandles(props.handles) : []
+        options.resizable ? filterHandles(handles) : []
     )
     return {
         handlesFiltered,

@@ -1,103 +1,85 @@
-import {computed, Ref} from "vue";
-import {initParent, initState} from "@/components/hooks";
-import {DraggableResizableProps} from "@/components/DraggableResizable/types";
+import {computed, ComputedRef, Ref} from "vue";
 
 export const useLimitSize = (
-    props: DraggableResizableProps,
-    parentSize: ReturnType<typeof initParent>,
-    containerProps: ReturnType<typeof initState>
-) => {
-    const {
-        width,
-        height,
-        left,
-        top,
-        resizingMaxWidth,
-        resizingMaxHeight,
-        resizingMinWidth,
-        resizingMinHeight
-    } = containerProps
-    const { setWidth, setHeight, setTop, setLeft } = containerProps
-    const { parentWidth, parentHeight } = parentSize
-
-    const limitProps = {
-        minWidth: computed(() => {
-            return resizingMinWidth.value
-        }),
-        minHeight: computed(() => {
-            return resizingMinHeight.value
-        }),
-        maxWidth: computed(() => {
-            let max = Infinity
-            if (props.parent) {
-                max = Math.min(parentWidth.value, resizingMaxWidth.value)
-            }
-            return max
-        }),
-        maxHeight: computed(() => {
-            let max = Infinity
-            if (props.parent) {
-                max = Math.min(parentHeight.value, resizingMaxHeight.value)
-            }
-            return max
-        }),
-        minLeft: computed(() => {
-            return props.parent ? 0 : -Infinity
-        }),
-        minTop: computed(() => {
-            return props.parent ? 0 : -Infinity
-        }),
-        maxLeft: computed(() => {
-            return props.parent ? parentWidth.value - width.value : Infinity
-        }),
-        maxTop: computed(() => {
-            return props.parent ? parentHeight.value - height.value : Infinity
-        })
+    sizeValues: {
+        resizingMinHeight: Ref<number>
+        resizingMinWidth: Ref<number>
+        resizingMaxHeight: Ref<number>
+        resizingMaxWidth: Ref<number>
+        parentWidth: ComputedRef<number | null>
+        parentHeight: ComputedRef<number | null>
+        width: Ref<number>
+        height: Ref<number>
+        y: Ref<number>
+        x: Ref<number>
+    },
+    options: {
+        useParent: boolean
+        disabledW: boolean
+        disabledH: boolean
+        disabledY: boolean
+        disabledX: boolean
     }
+) => {
+    const limitProps = {
+        minWidth: computed(() => sizeValues.resizingMinWidth.value),
+        minHeight: computed(() => sizeValues.resizingMinHeight.value),
+        maxWidth: computed(() =>
+            options.useParent
+                ? Math.min(sizeValues.parentWidth.value, sizeValues.resizingMaxWidth.value)
+                : Infinity
+        ),
+        maxHeight: computed(() =>
+            options.useParent
+                ? Math.min(sizeValues.parentHeight.value, sizeValues.resizingMaxHeight.value)
+                : Infinity
+        ),
+        minLeft: computed(() => options.useParent ? 0 : -Infinity),
+        minTop: computed(() =>  options.useParent ? 0 : -Infinity),
+        maxLeft: computed(() => options.useParent ? sizeValues.parentWidth.value - width.value : Infinity),
+        maxTop: computed(() => options.useParent ? sizeValues.parentHeight.value - height.value : Infinity)
+    }
+
     const limitMethods = {
         setWidth(val: number) {
-            if (props.disabledW) {
-                return width.value
-            }
-            return setWidth(
-                Math.min(
-                    limitProps.maxWidth.value,
-                    Math.max(limitProps.minWidth.value, val)
-                )
+            if (options.disabledW) return sizeValues.width.value
+
+            sizeValues.width.value = Math.min(
+                limitProps.maxWidth.value,
+                Math.max(limitProps.minWidth.value, val)
             )
+
+            return sizeValues.width.value
         },
         setHeight(val: number) {
-            if (props.disabledH) {
-                return height.value
-            }
-            return setHeight(
-                Math.min(
-                    limitProps.maxHeight.value,
-                    Math.max(limitProps.minHeight.value, val)
-                )
+            if (options.disabledH) return sizeValues.height.value
+
+            sizeValues.height.value = Math.min(
+                limitProps.maxHeight.value,
+                Math.max(limitProps.minHeight.value, val)
             )
+
+            return sizeValues.height.value
         },
         setTop(val: number) {
-            if (props.disabledY) {
-                return top.value
+            if (options.disabledY) {
+                return sizeValues.y.value
             }
-            return setTop(
-                Math.min(
-                    limitProps.maxTop.value,
-                    Math.max(limitProps.minTop.value, val)
-                )
+            sizeValues.y.value = Math.min(
+                limitProps.maxTop.value,
+                Math.max(limitProps.minTop.value, val)
             )
+            return sizeValues.y.value
         },
         setLeft(val: number) {
-            if (props.disabledX) {
-                return left.value
-            }
-            return setLeft(
-                Math.min(
-                    limitProps.maxLeft.value,
-                    Math.max(limitProps.minLeft.value, val)
-                )
+            if (options.disabledX) return sizeValues.x.value
+
+            sizeValues.x.value = Math.min(
+                limitProps.maxLeft.value,
+                Math.max(limitProps.minLeft.value, val)
             )
+
+            return sizeValues.x.value
         }
     }
     return {

@@ -16,20 +16,21 @@ import {useParentSize} from "@/composables/useParent";
 import {useResizeHandle} from "@/composables/useResizeHandle";
 import {useIdentity} from "@/components/DraggableContainer/useIdentity";
 import {DraggableResizableProps} from "@/components/DraggableResizable/types";
+import {useLimitSize} from "@/composables/useLimitSize";
 
-const props = withDefaults(defineProps<DraggableResizableProps>(),{
-  handles : ALL_HANDLES,
-  classNameActive : 'active',
-  classNameHandle : 'handle',
-  classNameResizing : 'resizing',
-  classNameDragging : 'dragging',
-  classNameDraggable : 'draggable',
-  classNameResizable : 'resizable',
-  minW : 20,
-  minH : 20,
-  parent : false,
-  draggable : true,
-  resizable : true,
+const props = withDefaults(defineProps<DraggableResizableProps>(), {
+  handles: ALL_HANDLES,
+  classNameActive: 'active',
+  classNameHandle: 'handle',
+  classNameResizing: 'resizing',
+  classNameDragging: 'dragging',
+  classNameDraggable: 'draggable',
+  classNameResizable: 'resizable',
+  minW: 20,
+  minH: 20,
+  parent: false,
+  draggable: true,
+  resizable: true,
 })
 
 const emit = defineEmits<{
@@ -44,33 +45,40 @@ const emit = defineEmits<{
 }>()
 
 
-const width = defineModel<number>('w', { default: (props) => props.initW ?? 0} )
-const height = defineModel<number>('h', { default: (props) => props.initH ?? 0} )
-const x = defineModel<number>('x', { default: (props) => props.x ?? 0} )
-const y = defineModel<number>('y', { default: (props) => props.y ?? 0} )
+const width = defineModel<number>('w', {default: (props) => props.initW ?? 0})
+const height = defineModel<number>('h', {default: (props) => props.initH ?? 0})
+const x = defineModel<number>('x', {default: (props) => props.x ?? 0})
+const y = defineModel<number>('y', {default: (props) => props.y ?? 0})
 
 const active = defineModel<boolean>('active', {default: (props) => props.active})
 
-
-const containerProps = initState(props, emit)
-
-const {dragging, resizing, enable, left, setWidth, setHeight, id,  top, setEnable} = containerProps
-
-watch(enable, (newVal, oldVal) => {
-  active.value = newVal
-  if (!oldVal && newVal) {
+watch(active, (newVal) => {
+  if (newVal) {
     emit('activated')
-  } else if (oldVal && !newVal) {
+  } else {
     emit('deactivated')
   }
 })
 
-watch(
-    () => active,
-    (newVal) => {
-      setEnable(newVal)
-    }
-)
+// const containerProps = initState(props, emit)
+
+// const {dragging, resizing, enable, left, setWidth, setHeight, id,  top, setEnable} = containerProps
+
+// watch(enable, (newVal, oldVal) => {
+//   active.value = newVal
+//   if (!oldVal && newVal) {
+//     emit('activated')
+//   } else if (oldVal && !newVal) {
+//     emit('deactivated')
+//   }
+// })
+//
+// watch(
+//     () => active,
+//     (newVal) => {
+//       setEnable(newVal)
+//     }
+// )
 
 const resizingHandle = ref<ResizingHandle>('')
 const resizingMaxWidth = ref<number>(Infinity)
@@ -78,7 +86,27 @@ const resizingMaxHeight = ref<number>(Infinity)
 const resizingMinWidth = ref<number>(props.minW)
 const resizingMinHeight = ref<number>(props.minH)
 
+const dragging = ref(false)
+const resizing = ref(false)
+
+
 const aspectRatio = computed(() => height.value / width.value)
+
+const setWidth = (value: number) => {
+  width.value = Math.floor(value)
+}
+
+const setHeight = (value: number) => {
+  height.value = Math.floor(value)
+}
+
+const setTop = (value: number) => {
+  y.value = Math.floor(value)
+}
+
+const setLeft = (value: number) => {
+  x.value = Math.floor(value)
+}
 
 
 const provideIdentity = useIdentity()
@@ -99,31 +127,75 @@ if (provideIdentity === IDENTITY) {
 
 const containerRef = useTemplateRef('container')
 
-// const parentSize = initParent(containerRef)
-const parentSize = useParentSize(containerRef, {enabled: toRef(props, 'parent')})
+const {parentHeight, parentWidth} = useParentSize(containerRef, {enabled: toRef(props, 'parent')})
 
-const limitProps = initLimitSizeAndMethods(
-    props,
-    parentSize,
-    containerProps
-)
+const limitProps = useLimitSize({
+  resizingMinHeight,
+  resizingMinWidth,
+  resizingMaxWidth,
+  resizingMaxHeight,
+  parentWidth,
+  parentHeight,
+  width,
+  height,
+  y,
+  x
+}, {
+  useParent: props.parent,
+  disabledH: props.disabledH,
+  disabledW: props.disabledW,
+  disabledY: props.disabledY,
+  disabledX: props.disabledX,
+})
 
-initDraggableContainer(
-    containerRef,
-    containerProps,
-    limitProps,
-    toRef(props, 'draggable'),
-    emit,
-    containerProvider,
-    parentSize
-)
+// const limitProps = initLimitSizeAndMethods(
+//     props,
+//     parentSize,
+//     containerProps
+// )
 
-const { resizeHandleDown } = useResizeHandle(
-    containerProps,
-    limitProps,
-    parentSize,
-    props,
-    emit
+// initDraggableContainer(
+//     containerRef,
+//     containerProps,
+//     limitProps,
+//     toRef(props, 'draggable'),
+//     emit,
+//     containerProvider,
+//     parentSize
+// )
+
+const {resizeHandleDown} = useResizeHandle(
+    {
+      width,
+      height,
+      x,
+      y,
+      aspectRatio,
+      parentHeight,
+      parentWidth,
+      minH: toRef(props, 'minH'),
+      minW: toRef(props, 'minW'),
+    },
+    {
+      resizing,
+      resizingHandle,
+      handles: toRef(props, 'handles'),
+      resizingMaxWidth,
+      resizingMinHeight,
+      resizingMaxHeight,
+      resizingMinWidth,
+    },
+    {
+      setWidth,
+      setHeight,
+      setTop,
+      setLeft,
+      emit,
+    },
+    {
+      lockAspectRatio: props.lockAspectRatio,
+      resizable: props.resizable,
+    }
 )
 //
 // watchProps(props, limitProps)
@@ -132,8 +204,8 @@ const style = computed(() =>
     ({
       width: `${width.value}px`,
       height: `${height.value}px`,
-      top: `${top.value}px`,
-      left: `${left.value}px`,
+      top: `${y.value}px`,
+      left: `${x.value}px`,
     })
 )
 
@@ -142,9 +214,9 @@ const handlesFiltered = computed(() =>
 )
 
 const containerClass = computed(() => ({
-  // [classNameActive]: enable.value,
-  // [classNameDragging]: dragging.value,
-  // [classNameResizing]: resizing.value,
+  [props.classNameActive]: active.value,
+  [props.classNameDragging]: dragging.value,
+  [props.classNameResizing]: resizing.value,
   [props.classNameDraggable]: props.draggable,
   [props.classNameResizable]: props.resizable
 }))
@@ -184,10 +256,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="container" class="vdr-container" :class="containerClass" :style="style">
+  <div @click="active = true" ref="container" class="vdr-container" :class="containerClass" :style="style">
     <slot/>
     <div v-for="item in handlesFiltered" :key="item" @mousedown.passive="resizeHandleDown($event, item)"
-         @touchstart.passive="resizeHandleDown($event, item)" :style="{ display: true ? 'block' : 'none' }"
+         @touchstart.passive="resizeHandleDown($event, item)" :style="{ display: active ? 'block' : 'none' }"
          class="vdr-handle"
          :class="[`vdr-handle-${item}`, classNameHandle, `${classNameHandle}-${item}`]"/>
   </div>
