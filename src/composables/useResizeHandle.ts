@@ -12,8 +12,8 @@ const MOVE_HANDLES: (keyof HTMLElementEventMap)[] = ['mousemove', 'touchmove']
 const getPosition = (e: HandleEvent) => 'touches' in e ? [e.touches[0].pageX, e.touches[0].pageY] : [e.pageX, e.pageY]
 
 export const useResizeHandle = (
-    {width, height, x, y, aspectRatio, parentWidth, parentHeight,  minH, minW},
-    {resizing, handles ,resizingHandle, resizingMaxWidth, resizingMinHeight, resizingMaxHeight, resizingMinWidth },
+    {width, height, x, y, aspectRatio, parentWidth, parentHeight, minH, minW},
+    {resizing, handles, resizingHandle, resizingMaxWidth, resizingMinHeight, resizingMaxHeight, resizingMinWidth},
     {setWidth, setHeight, setLeft, setTop, emit},
     options: {
         lockAspectRatio: boolean

@@ -17,6 +17,7 @@ import {useResizeHandle} from "@/composables/useResizeHandle";
 import {useIdentity} from "@/components/DraggableContainer/useIdentity";
 import {DraggableResizableProps} from "@/components/DraggableResizable/types";
 import {useLimitSize} from "@/composables/useLimitSize";
+import {useDraggableContainer} from "@/composables/useDraggableContainer";
 
 const props = withDefaults(defineProps<DraggableResizableProps>(), {
   handles: ALL_HANDLES,
@@ -199,6 +200,20 @@ const {resizeHandleDown} = useResizeHandle(
 )
 //
 // watchProps(props, limitProps)
+
+useDraggableContainer({x, y, w: width, h: height}, {
+  container: containerRef,
+  active,
+  dragging,
+  resizing,
+  handles: props.handles
+}, {
+  draggable: toRef(props, 'draggable'),
+  emit,
+  parent,
+  parentWidth,
+  parentHeight,
+})
 
 const style = computed(() =>
     ({
