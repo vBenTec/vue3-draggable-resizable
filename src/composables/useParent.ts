@@ -1,5 +1,6 @@
 import {computed, Ref, ShallowRef,} from "vue";
-import {getElSize} from "@/components/utils";
+import {getElSize} from "@/utils";
+
 
 export const useParentSize = (containerRef: ShallowRef<HTMLDivElement | null>, options: {
     enabled: Readonly<Ref<boolean>>

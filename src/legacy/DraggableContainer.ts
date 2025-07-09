@@ -7,8 +7,9 @@ import {
   MatchedLine,
   SetMatchedLine
 } from './types'
-import { IDENTITY } from './utils'
+
 import {provideIdentity} from "@/components/DraggableContainer/useIdentity";
+import {IDENTITY} from "@/utils";
 
 export default defineComponent({
   name: 'DraggableContainer',

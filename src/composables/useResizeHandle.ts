@@ -1,6 +1,7 @@
-import { addEvent, filterHandles, removeEvent } from "@/components/utils";
-import { ResizingHandle } from "@/components/types";
+
 import { computed, onUnmounted, Ref } from "vue";
+import {ResizingHandle} from "@/legacy/types";
+import {addEvent, filterHandles, removeEvent} from "@/utils";
 
 type HandleEvent = MouseEvent | TouchEvent;
 

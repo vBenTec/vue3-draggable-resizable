@@ -8,7 +8,7 @@ import {
   initResizeHandle
 } from './hooks'
 import './index.css'
-import { getElSize, filterHandles, IDENTITY } from './utils'
+
 import {
   UpdatePosition,
   GetPositionStore,
@@ -16,6 +16,7 @@ import {
   ContainerProvider,
   SetMatchedLine
 } from './types'
+import {filterHandles, getElSize, IDENTITY} from "@/utils";
 
 export const ALL_HANDLES: ResizingHandle[] = [
   'tl',

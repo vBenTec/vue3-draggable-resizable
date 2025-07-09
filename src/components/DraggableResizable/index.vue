@@ -1,15 +1,15 @@
 <script setup lang="ts">
 
-import {ContainerProvider, GetPositionStore, ResizingHandle, SetMatchedLine, UpdatePosition} from "@/components/types";
-import {computed, inject, ref, Ref, toRef, useTemplateRef, onMounted, nextTick, watch} from "vue";
-import {filterHandles, getElSize, IDENTITY} from "@/components/utils";
-import {ALL_HANDLES} from "@/components/Vue3DraggableResizable";
+import {computed, inject, ref, Ref, toRef, useTemplateRef, onMounted, nextTick, watch, useId} from "vue";
 import {useParentSize} from "@/composables/useParent";
 import {useResizeHandle} from "@/composables/useResizeHandle";
 import {useIdentity} from "@/components/DraggableContainer/useIdentity";
 import {DraggableResizableProps} from "@/components/DraggableResizable/types";
 import {useLimitSize} from "@/composables/useLimitSize";
 import {useDraggableContainer} from "@/composables/useDraggableContainer";
+import {ALL_HANDLES} from "@/legacy/Vue3DraggableResizable";
+import {ContainerProvider, GetPositionStore, ResizingHandle, SetMatchedLine, UpdatePosition} from "@/legacy/types";
+import {filterHandles, IDENTITY} from "@/utils";
 
 
 const props = withDefaults(defineProps<DraggableResizableProps>(), {
@@ -235,23 +235,14 @@ onMounted(() => {
 
   containerRef.value.ondragstart = () => false
 
-  // const {width: elWidth, height: elHeight} = getElSize(containerRef.value)
-
-  // const initialWidth = !props.initW ? w.value || elWidth : props.initW;
-  // const initialHeight = !props.initH ? h.value || elHeight : props.initH;
-
-
-  // setWidth(initialWidth ? initialWidth : minW)
-  // setHeight(initialHeight ? initialHeight : minH);
-
-  // if (containerProvider) {
-  //   containerProvider.updatePosition(id, {
-  //     x: left.value,
-  //     y: top.value,
-  //     w: width.value,
-  //     h: height.value
-  //   })
-  // }
+  if (containerProvider) {
+    containerProvider.updatePosition(useId(), {
+      x: x.value,
+      y: y.value,
+      w: width.value,
+      h: height.value
+    })
+  }
 })
 
 // defineExpose({

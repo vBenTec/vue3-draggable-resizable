@@ -1,4 +1,5 @@
-import {ResizingHandle} from "@/components/types";
+import {ResizingHandle} from "@/legacy/types";
+
 
 export interface DraggableResizableProps {
     initW?: number

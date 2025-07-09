@@ -1,14 +1,9 @@
 <script setup lang="ts">
 import {computed, provide, reactive, toRef} from "vue";
-import {
-  GetPositionStore,
-  MatchedLine,
-  Position,
-  PositionStore,
-  SetMatchedLine,
-  UpdatePosition
-} from "@/components/types";
-import {IDENTITY} from "@/components/utils";
+import {GetPositionStore, MatchedLine, Position, PositionStore, SetMatchedLine, UpdatePosition} from "@/legacy/types";
+import {IDENTITY} from "@/utils";
+
+
 
 interface Props {
   disabled?: boolean;

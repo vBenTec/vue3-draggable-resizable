@@ -115,7 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import Vue3DraggableResizable from "./components/Vue3DraggableResizable";
+import Vue3DraggableResizable from "./legacy/Vue3DraggableResizable";
 import DraggableResizable from "./components/DraggableResizable/index.vue";
 import {reactive} from "vue";
 import DraggableContainer from "@/components/DraggableContainer/index.vue";

@@ -1,10 +1,6 @@
-import {
-  ContainerProvider,
-  ParentSize,
-  ReferenceLineMap,
-  ResizingHandle
-} from './types'
-import { ALL_HANDLES } from './Vue3DraggableResizable'
+import {ContainerProvider, ParentSize, ReferenceLineMap, ResizingHandle} from "@/legacy/types";
+import {ALL_HANDLES} from "@/legacy/Vue3DraggableResizable";
+
 
 export const IDENTITY = Symbol('Vue3DraggableResizable')
 

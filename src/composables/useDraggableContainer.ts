@@ -1,6 +1,8 @@
 import {onMounted, onUnmounted, watch, Ref} from "vue";
-import {addEvent, removeEvent} from "@/components/utils";
-import {MatchedLine, ReferenceLineMap} from "@/components/types";
+import {ReferenceLineMap} from "@/legacy/types";
+import {addEvent, removeEvent} from "@/utils";
+
+
 
 const DOWN_HANDLES: (keyof HTMLElementEventMap)[] = ['mousedown', 'touchstart'];
 const UP_HANDLES: (keyof HTMLElementEventMap)[] = ['mouseup', 'touchend'];

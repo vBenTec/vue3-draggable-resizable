@@ -1,18 +1,12 @@
 import { onMounted, onUnmounted, ref, watch, Ref, computed } from 'vue'
-import {
-  getElSize,
-  filterHandles,
-  getId,
-  getReferenceLineMap,
-  addEvent,
-  removeEvent
-} from './utils'
+
 import {
   ContainerProvider,
   MatchedLine,
   ReferenceLineMap,
   ResizingHandle
 } from './types'
+import {addEvent, filterHandles, getElSize, getId, getReferenceLineMap, removeEvent} from "@/utils";
 
 type HandleEvent = MouseEvent | TouchEvent
 
