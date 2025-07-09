@@ -1,5 +1,5 @@
 {
-  "name": "vue3-draggable-resizable",
+  "name": "vue-draggable-resizable",
   "version": "1.6.1",
   "private": false,
   "description": "[Vue3 Component] draggable and resizable component for Vue 3, support snapping and aligning.",
@@ -7,9 +7,8 @@
     "dev": "vite",
     "serve": "vite preview",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
-    "build": "npm run build:lib && npm run build:dts",
-    "build:lib": "vite build --target lib --name Vue3DraggableResizable src/index.html",
-    "build:dts": "tsc src/index.html --declaration --declarationDir typings"
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
@@ -28,21 +27,29 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/a7650/vue3-draggable-resizable.git"
+    "url": "git+https://github.com/vBenTec/vue3-draggable-resizable.git"
   },
   "bugs": {
-    "url": "https://github.com/a7650/vue3-draggable-resizable/issues"
+    "url": "https://github.com/vBenTec/vue3-draggable-resizable/issues"
   },
-  "homepage": "https://github.com/a7650/vue3-draggable-resizable",
+  "homepage": "https://github.com/vBenTec/vue3-draggable-resizable",
   "keywords": [
     "vue",
     "component",
     "draggable",
     "resizable"
   ],
-  "main": "src/index.js",
-  "module": "src/index.js",
-  "unpkg": "src/index.js",
-  "typings": "typings/index.d.ts",
+  "main": "./dist/vue-draggable-resizable.umd.cjs",
+  "module": "./dist/vue-draggable-resizable.mjs",
+  "typings": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/vue-draggable-resizable.js",
+      "require": "./dist/vue-draggable-resizable.umd.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "packageManager": "pnpm@10.12.3"
 }

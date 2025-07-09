@@ -26,18 +26,18 @@ export const useLimitSize = (
         minHeight: computed(() => sizeValues.resizingMinHeight.value),
         maxWidth: computed(() =>
             options.useParent
-                ? Math.min(sizeValues.parentWidth.value, sizeValues.resizingMaxWidth.value)
+                ? Math.min(sizeValues.parentWidth.value as number, sizeValues.resizingMaxWidth.value)
                 : Infinity
         ),
         maxHeight: computed(() =>
             options.useParent
-                ? Math.min(sizeValues.parentHeight.value, sizeValues.resizingMaxHeight.value)
+                ? Math.min(sizeValues.parentHeight.value as number, sizeValues.resizingMaxHeight.value)
                 : Infinity
         ),
         minLeft: computed(() => options.useParent ? 0 : -Infinity),
-        minTop: computed(() =>  options.useParent ? 0 : -Infinity),
-        maxLeft: computed(() => options.useParent ? sizeValues.parentWidth.value - width.value : Infinity),
-        maxTop: computed(() => options.useParent ? sizeValues.parentHeight.value - height.value : Infinity)
+        minTop: computed(() => options.useParent ? 0 : -Infinity),
+        maxLeft: computed(() => options.useParent ? sizeValues.parentWidth.value as number - sizeValues.x.value : Infinity),
+        maxTop: computed(() => options.useParent ? sizeValues.parentHeight.value as number - sizeValues.height.value : Infinity)
     }
 
     const limitMethods = {

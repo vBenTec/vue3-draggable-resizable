@@ -11,6 +11,8 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "emitDeclarationOnly": false,
+    "composite": true,
     "paths": {
       "@/*": [
         "src/*"

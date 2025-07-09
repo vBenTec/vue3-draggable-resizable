@@ -2,14 +2,6 @@
 
 import {ContainerProvider, GetPositionStore, ResizingHandle, SetMatchedLine, UpdatePosition} from "@/components/types";
 import {computed, inject, ref, Ref, toRef, useTemplateRef, onMounted, nextTick, watch} from "vue";
-import {
-  initDraggableContainer,
-  initLimitSizeAndMethods,
-  initParent,
-  initResizeHandle,
-  initState,
-  watchProps
-} from "@/components/hooks";
 import {filterHandles, getElSize, IDENTITY} from "@/components/utils";
 import {ALL_HANDLES} from "@/components/Vue3DraggableResizable";
 import {useParentSize} from "@/composables/useParent";
@@ -18,6 +10,7 @@ import {useIdentity} from "@/components/DraggableContainer/useIdentity";
 import {DraggableResizableProps} from "@/components/DraggableResizable/types";
 import {useLimitSize} from "@/composables/useLimitSize";
 import {useDraggableContainer} from "@/composables/useDraggableContainer";
+
 
 const props = withDefaults(defineProps<DraggableResizableProps>(), {
   handles: ALL_HANDLES,
@@ -196,6 +189,7 @@ const {resizeHandleDown} = useResizeHandle(
     {
       lockAspectRatio: props.lockAspectRatio,
       resizable: props.resizable,
+      parent: parent
     }
 )
 //
