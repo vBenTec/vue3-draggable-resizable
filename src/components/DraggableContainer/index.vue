@@ -16,17 +16,17 @@ interface Props {
   adsorbCols?: number[]
   adsorbRows?: number[]
   referenceLineVisible?: boolean
-  referenceLineColor: string
+  referenceLineColor?: string
 }
 
-const {
-  disabled = false,
-  absorbParent = true,
-  adsorbCols = [],
-  adsorbRows = [],
-  referenceLineVisible = true,
-  referenceLineColor = '#f00'
-} = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false,
+  absorbParent: true,
+  adsorbCols: () => [],
+  adsorbRows: () => [],
+  referenceLineVisible: true,
+  referenceLineColor: '#f00'
+})
 
 
 const positionStore = reactive<PositionStore>({})
@@ -64,16 +64,33 @@ provide('identity', IDENTITY)
 provide('updatePosition', updatePosition)
 provide('getPositionStore', getPositionStore)
 provide('setMatchedLine', setMatchedLine)
-provide('disabled', toRef(disabled))
-provide('adsorbParent', toRef(absorbParent))
-provide('adsorbCols', adsorbCols )
-provide('adsorbRows', adsorbRows )
+provide('disabled', toRef(props, 'disabled'))
+provide('adsorbParent', toRef(props, 'absorbParent'))
+provide('adsorbCols', toRef(props, 'adsorbCols'))
+provide('adsorbRows', toRef(props, 'adsorbRows'))
 </script>
 
 <template>
   <div class="draggable-container">
     <slot/>
-    <div class="reference-line"></div>
+
+    <template v-if="referenceLineVisible">
+      <div v-for="item in matchedCols" :key="item" class="reference-line" :style="{
+        width: '0px',
+        height: '100%',
+        top: '0',
+        left: item + 'px',
+        borderLeft: `1px dashed ${referenceLineColor}`,
+        position: 'absolute',
+      }"/>
+      <div v-for="item in matchedRows" :key="item" class="reference-line" :style="{
+        width: '100%',
+        height: '0',
+        top: item + 'px',
+        borderTop: `1px dashed ${referenceLineColor}`,
+        position: 'absolute',
+      }"/>
+    </template>
   </div>
 </template>
 
@@ -84,7 +101,4 @@ provide('adsorbRows', adsorbRows )
   position: relative;
 }
 
-.reference-line {
-
-}
 </style>
