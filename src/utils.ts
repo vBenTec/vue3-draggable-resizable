@@ -66,8 +66,8 @@ export function getReferenceLineMap(
     col: [] as number[]
   }
   const { parentWidth, parentHeight } = parentSize
-  referenceLine.row.push(...containerProvider.adsorbRows)
-  referenceLine.col.push(...containerProvider.adsorbCols)
+  referenceLine.row.push(...(containerProvider.adsorbRows?.value || []))
+  referenceLine.col.push(...(containerProvider.adsorbCols?.value || []))
   if (containerProvider.adsorbParent.value) {
     referenceLine.row.push(0, parentHeight.value, parentHeight.value / 2)
     referenceLine.col.push(0, parentWidth.value, parentWidth.value / 2)

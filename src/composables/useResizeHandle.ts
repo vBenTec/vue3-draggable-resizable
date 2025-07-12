@@ -2,6 +2,7 @@
 import { computed, onUnmounted, Ref } from "vue";
 import {ResizingHandle} from "@/legacy/types";
 import {addEvent, filterHandles, removeEvent} from "@/utils";
+import {useContainerProvider} from "@/components/DraggableContainer/useContainerProvider";
 
 type HandleEvent = MouseEvent | TouchEvent;
 

@@ -10,7 +10,6 @@ import {useDraggableContainer} from "@/composables/useDraggableContainer";
 import {ALL_HANDLES} from "@/legacy/Vue3DraggableResizable";
 import {ContainerProvider, GetPositionStore, ResizingHandle, SetMatchedLine, UpdatePosition} from "@/legacy/types";
 import {filterHandles, IDENTITY} from "@/utils";
-import {useContainerProvider} from "@/components/DraggableContainer/useContainerProvider";
 
 
 const props = withDefaults(defineProps<DraggableResizableProps>(), {
@@ -46,8 +45,6 @@ const x = defineModel<number>('x', {default: (props) => props.x ?? 0})
 const y = defineModel<number>('y', {default: (props) => props.y ?? 0})
 
 const active = defineModel<boolean>('active', {default: (props) => props.active})
-
-const id = useId()
 
 watch(active, (newVal) => {
   if (newVal) {
@@ -85,7 +82,22 @@ const setLeft = (value: number) => {
   x.value = Math.floor(value)
 }
 
-const containerProvider = useContainerProvider()
+
+const provideIdentity = useIdentity()
+
+let containerProvider: ContainerProvider | null = null
+
+if (provideIdentity === IDENTITY) {
+  containerProvider = {
+    updatePosition: inject<UpdatePosition>('updatePosition')!,
+    getPositionStore: inject<GetPositionStore>('getPositionStore')!,
+    disabled: inject<Ref<boolean>>('disabled')!,
+    adsorbParent: inject<Ref<boolean>>('adsorbParent')!,
+    adsorbCols: inject<number[]>('adsorbCols')!,
+    adsorbRows: inject<number[]>('adsorbRows')!,
+    setMatchedLine: inject<SetMatchedLine>('setMatchedLine')!
+  }
+}
 
 const containerRef = useTemplateRef('container')
 
@@ -150,8 +162,7 @@ useDraggableContainer({x, y, w: width, h: height}, {
   active,
   dragging,
   resizing,
-  handles: props.handles,
-  id
+  handles: props.handles
 }, {
   draggable: toRef(props, 'draggable'),
   emit,
@@ -186,13 +197,14 @@ onMounted(() => {
 
   containerRef.value.ondragstart = () => false
 
-  containerProvider?.updatePosition(id, {
-    x: x.value,
-    y: y.value,
-    w: width.value,
-    h: height.value
-  })
-
+  if (containerProvider) {
+    containerProvider.updatePosition(useId(), {
+      x: x.value,
+      y: y.value,
+      w: width.value,
+      h: height.value
+    })
+  }
 })
 
 // defineExpose({

@@ -22,6 +22,7 @@
     </div>
     <div>active:{{ state.active }}<br/></div>
 
+    <h2>Legacy</h2>
     <div class="parent">
       <Vue3DraggableResizable
           :initW="40"
@@ -53,6 +54,66 @@
       </Vue3DraggableResizable>
     </div>
 
+    <DraggableContainerLegacy adsorb-parent >
+      <Vue3DraggableResizable
+          :initW="40"
+          :initH="80"
+          v-model:x="state.x"
+          v-model:y="state.y"
+          v-model:w="state.w"
+          v-model:h="state.h"
+          v-model:active="state.active"
+          :draggable="true"
+          :resizable="true"
+          :disabledX="false"
+          :disabledW="false"
+          :disabledH="false"
+          :disabledY="false"
+          :lockAspectRatio="true"
+          classNameHandle="my-handle"
+          @activated="print('activated')"
+          @deactivated="print('deactivated')"
+          @drag-start="print('drag-start', $event)"
+          @resize-start="print('resize-start', $event)"
+          @dragging="print('dragging', $event)"
+          @resizing="print('resizing', $event)"
+          @drag-end="print('drag-end', $event)"
+          @resize-end="print('resize-end', $event)"
+      >
+        This is a test example
+      </Vue3DraggableResizable>
+
+      <Vue3DraggableResizable
+          :initW="40"
+          :initH="80"
+          :x="20"
+          :y="40"
+          v-model:w="state.w"
+          v-model:h="state.h"
+          v-model:active="state.active"
+          :draggable="true"
+          :resizable="true"
+          :disabledX="false"
+          :disabledW="false"
+          :disabledH="false"
+          :disabledY="false"
+          :lockAspectRatio="true"
+          classNameHandle="my-handle"
+          @activated="print('activated')"
+          @deactivated="print('deactivated')"
+          @drag-start="print('drag-start', $event)"
+          @resize-start="print('resize-start', $event)"
+          @dragging="print('dragging', $event)"
+          @resizing="print('resizing', $event)"
+          @drag-end="print('drag-end', $event)"
+          @resize-end="print('resize-end', $event)"
+      >
+        This is a test example
+      </Vue3DraggableResizable>
+    </DraggableContainerLegacy>
+
+
+    <h2>New Stack</h2>
     <div class="parent">
       <DraggableResizable :initW="40"
                           :initH="80"
@@ -108,6 +169,33 @@
                             @resize-end="print('resize-end', $event)">
           Example ist a test
         </DraggableResizable>
+
+        <DraggableResizable :initW="40"
+                            :initH="80"
+                            :draggable="true"
+                            :resizable="true"
+                            :parent="true"
+                            :disabledX="false"
+                            :disabledW="false"
+                            :disabledH="false"
+                            :disabledY="false"
+                            :lockAspectRatio="true">
+          Example ist a test
+        </DraggableResizable>
+
+        <DraggableResizable :initW="40"
+                            :initH="80"
+                            :x="100"
+                            :draggable="true"
+                            :resizable="true"
+                            :parent="true"
+                            :disabledX="false"
+                            :disabledW="false"
+                            :disabledH="false"
+                            :disabledY="false"
+                            :lockAspectRatio="true">
+          Example ist a test
+        </DraggableResizable>
       </DraggableContainer>
 
     </div>
@@ -119,6 +207,7 @@ import Vue3DraggableResizable from "./legacy/Vue3DraggableResizable";
 import DraggableResizable from "./components/DraggableResizable/index.vue";
 import {reactive} from "vue";
 import DraggableContainer from "@/components/DraggableContainer/index.vue";
+import DraggableContainerLegacy from '@/legacy/DraggableContainer'
 
 const state = reactive({
   x: 100,

@@ -1,6 +1,8 @@
 import {onMounted, onUnmounted, watch, Ref} from "vue";
-import {ReferenceLineMap} from "@/legacy/types";
-import {addEvent, removeEvent} from "@/utils";
+import {MatchedLine, ReferenceLineMap} from "@/legacy/types";
+// Assuming getReferenceLineMap is moved to utils
+import {addEvent, removeEvent, getReferenceLineMap} from "@/utils";
+import {useContainerProvider} from "@/components/DraggableContainer/useContainerProvider";
 
 
 
@@ -31,6 +33,7 @@ interface DraggableContainerState {
     dragging: Ref<boolean>;
     resizing: Ref<boolean>;
     handles: Ref<string>;
+    id: string
 }
 
 interface DraggableContainerOptions {
@@ -46,15 +49,18 @@ export const useDraggableContainer = (
     state: DraggableContainerState,
     options: DraggableContainerOptions
 ) => {
+
+    const containerProvider = useContainerProvider()
+
     const {x, y, w, h} = props;
-    const {container, active, dragging, resizing, handles} = state;
+    const {container, active, dragging, resizing, handles, id} = state;
     const {draggable, emit, parent, parentWidth, parentHeight} = options;
 
     let lstX = 0;
     let lstY = 0;
     let lstPageX = 0;
     let lstPageY = 0;
-    const referenceLineMap: ReferenceLineMap | null = null;
+    let referenceLineMap: ReferenceLineMap | null = null;
 
     const documentElement = document.documentElement;
 
@@ -69,6 +75,16 @@ export const useDraggableContainer = (
         dragging.value = false;
         removeEvent(documentElement, UP_HANDLES, handleUp);
         removeEvent(documentElement, MOVE_HANDLES, handleDrag);
+
+        referenceLineMap = null
+
+        containerProvider?.updatePosition(id, {
+            x: x.value,
+            y: y.value,
+            w: w.value,
+            h: h.value
+        })
+        containerProvider?.setMatchedLine(null)
     };
 
     const handleDrag = (e: MouseEvent) => {
@@ -89,8 +105,59 @@ export const useDraggableContainer = (
             newTop = Math.min(maxTop, Math.max(0, newTop));
         }
 
+        if (referenceLineMap) {
+            const widgetSelfLine = {
+                col: [newLeft, newLeft + w.value / 2, newLeft + w.value],
+                row: [newTop, newTop + h.value / 2, newTop + h.value]
+            }
+            const matchedLine: unknown = {
+                row: widgetSelfLine.row
+                    .map((i, index) => {
+                        let match = null
+                        Object.values(referenceLineMap!.row).forEach((referItem) => {
+                            if (i >= referItem.min && i <= referItem.max) {
+                                match = referItem.value
+                            }
+                        })
+                        if (match !== null) {
+                            if (index === 0) {
+                                newTop = match
+                            } else if (index === 1) {
+                                newTop = Math.floor(match - h.value / 2)
+                            } else if (index === 2) {
+                                newTop = Math.floor(match - h.value)
+                            }
+                        }
+                        return match
+                    })
+                    .filter((i) => i !== null),
+                col: widgetSelfLine.col
+                    .map((i, index) => {
+                        let match = null
+                        Object.values(referenceLineMap!.col).forEach((referItem) => {
+                            if (i >= referItem.min && i <= referItem.max) {
+                                match = referItem.value
+                            }
+                        })
+                        if (match !== null) {
+                            if (index === 0) {
+                                newLeft = match
+                            } else if (index === 1) {
+                                newLeft = Math.floor(match - w.value / 2)
+                            } else if (index === 2) {
+                                newLeft = Math.floor(match - w.value)
+                            }
+                        }
+                        return match
+                    })
+                    .filter((i) => i !== null)
+            }
+            containerProvider!.setMatchedLine(matchedLine as MatchedLine)
+        }
+
         x.value = newLeft;
         y.value = newTop;
+
         emit('dragging', {x: newLeft, y: newTop});
     };
 
@@ -102,6 +169,10 @@ export const useDraggableContainer = (
         lstX = x.value;
         lstY = y.value;
         [lstPageX, lstPageY] = getPosition(e);
+
+        if (containerProvider && !containerProvider.disabled?.value) {
+            referenceLineMap = getReferenceLineMap(containerProvider, { parentWidth, parentHeight }, id);
+        }
 
         addEvent(documentElement, MOVE_HANDLES, handleDrag);
         addEvent(documentElement, UP_HANDLES, handleUp);
