@@ -4,7 +4,7 @@ import {provideContainer} from "@/components/DraggableContainer/useContainerProv
 
 interface Props {
   disabled?: boolean;
-  absorbParent?: boolean
+  adsorbParent?: boolean
   adsorbCols?: number[]
   adsorbRows?: number[]
   referenceLineVisible?: boolean
@@ -13,14 +13,14 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
-  absorbParent: true,
+  adsorbParent: true,
   referenceLineVisible: true,
   referenceLineColor: '#f00'
 })
 
 const {state} = provideContainer({
   disabled: toRef(props, 'disabled'),
-  absorbParent: toRef(props, 'absorbParent'),
+  adsorbParent: toRef(props, 'adsorbParent'),
   adsorbCols: toRef(props, 'adsorbCols'),
   adsorbRows: toRef(props, 'adsorbRows'),
   referenceLineVisible: toRef(props, 'referenceLineVisible'),
@@ -60,7 +60,6 @@ const matchedCols = computed(
 
 <style scoped>
 .draggable-container {
-  border: 1px solid red;
   width: 100%;
   height: 100%;
   position: relative;

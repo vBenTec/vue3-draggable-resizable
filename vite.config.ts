@@ -1,32 +1,32 @@
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
-import path from 'path'
+import {resolve} from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [vue()],
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, 'src'),
+            '@': resolve(__dirname, '/src'),
         },
     },
     build: {
         lib: {
-            entry: path.resolve(__dirname, 'src/index.ts'),
+            entry: resolve(__dirname, 'src/index.ts'),
             name: 'VueDraggableResizable',
             fileName: 'vue-draggable-resizable',
         },
-        rollupOptions: {
-            // make sure to externalize deps that shouldn't be bundled
-            // into your library
-            external: ['vue'],
-            output: {
-                // Provide global variables to use in the UMD build
-                // for externalized deps
-                globals: {
-                    vue: 'Vue',
-                },
-            },
-        },
+        // rollupOptions: {
+        //     // make sure to externalize deps that shouldn't be bundled
+        //     // into your library
+        //     external: ['vue'],
+        //     output: {
+        //         // Provide global variables to use in the UMD build
+        //         // for externalized deps
+        //         globals: {
+        //             vue: 'Vue',
+        //         },
+        //     },
+        // },
     },
 })

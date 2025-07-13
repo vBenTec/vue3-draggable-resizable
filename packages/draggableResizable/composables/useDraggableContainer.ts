@@ -4,8 +4,6 @@ import {MatchedLine, ReferenceLineMap} from "@/legacy/types";
 import {addEvent, removeEvent, getReferenceLineMap} from "@/utils";
 import {useContainerProvider} from "@/components/DraggableContainer/useContainerProvider";
 
-
-
 const DOWN_HANDLES: (keyof HTMLElementEventMap)[] = ['mousedown', 'touchstart'];
 const UP_HANDLES: (keyof HTMLElementEventMap)[] = ['mouseup', 'touchend'];
 const MOVE_HANDLES: (keyof HTMLElementEventMap)[] = ['mousemove', 'touchmove'];

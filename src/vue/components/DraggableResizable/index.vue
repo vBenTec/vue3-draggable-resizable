@@ -1,15 +1,15 @@
 <script setup lang="ts">
 
 import {computed, inject, ref, Ref, toRef, useTemplateRef, onMounted, nextTick, watch, useId} from "vue";
-import {useParentSize} from "@/composables/useParent";
-import {useResizeHandle} from "@/composables/useResizeHandle";
-import {useIdentity} from "@/components/DraggableContainer/useIdentity";
-import {DraggableResizableProps} from "@/components/DraggableResizable/types";
-import {useLimitSize} from "@/composables/useLimitSize";
-import {useDraggableContainer} from "@/composables/useDraggableContainer";
+import {useParentSize} from "@/vue/composables/useParent";
+import {useResizeHandle} from "@/vue/composables/useResizeHandle";
+import {DraggableResizableProps} from "@/vue/components/DraggableResizable/types";
+import {useLimitSize} from "@/vue/composables/useLimitSize";
+import {useDraggableContainer} from "@/vue/composables/useDraggableContainer";
 import {ALL_HANDLES} from "@/legacy/Vue3DraggableResizable";
 import {ContainerProvider, GetPositionStore, ResizingHandle, SetMatchedLine, UpdatePosition} from "@/legacy/types";
 import {filterHandles, IDENTITY} from "@/utils";
+import {useContainerProvider} from "@/vue/components/DraggableContainer/useContainerProvider";
 
 
 const props = withDefaults(defineProps<DraggableResizableProps>(), {
@@ -45,6 +45,8 @@ const x = defineModel<number>('x', {default: (props) => props.x ?? 0})
 const y = defineModel<number>('y', {default: (props) => props.y ?? 0})
 
 const active = defineModel<boolean>('active', {default: (props) => props.active})
+
+const id = useId()
 
 watch(active, (newVal) => {
   if (newVal) {
@@ -82,22 +84,7 @@ const setLeft = (value: number) => {
   x.value = Math.floor(value)
 }
 
-
-const provideIdentity = useIdentity()
-
-let containerProvider: ContainerProvider | null = null
-
-if (provideIdentity === IDENTITY) {
-  containerProvider = {
-    updatePosition: inject<UpdatePosition>('updatePosition')!,
-    getPositionStore: inject<GetPositionStore>('getPositionStore')!,
-    disabled: inject<Ref<boolean>>('disabled')!,
-    adsorbParent: inject<Ref<boolean>>('adsorbParent')!,
-    adsorbCols: inject<number[]>('adsorbCols')!,
-    adsorbRows: inject<number[]>('adsorbRows')!,
-    setMatchedLine: inject<SetMatchedLine>('setMatchedLine')!
-  }
-}
+const containerProvider = useContainerProvider()
 
 const containerRef = useTemplateRef('container')
 
@@ -162,7 +149,8 @@ useDraggableContainer({x, y, w: width, h: height}, {
   active,
   dragging,
   resizing,
-  handles: props.handles
+  handles: props.handles,
+  id
 }, {
   draggable: toRef(props, 'draggable'),
   emit,
@@ -197,14 +185,13 @@ onMounted(() => {
 
   containerRef.value.ondragstart = () => false
 
-  if (containerProvider) {
-    containerProvider.updatePosition(useId(), {
-      x: x.value,
-      y: y.value,
-      w: width.value,
-      h: height.value
-    })
-  }
+  containerProvider?.updatePosition(id, {
+    x: x.value,
+    y: y.value,
+    w: width.value,
+    h: height.value
+  })
+
 })
 
 // defineExpose({

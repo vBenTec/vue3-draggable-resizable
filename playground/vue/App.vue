@@ -54,7 +54,7 @@
       </Vue3DraggableResizable>
     </div>
 
-    <DraggableContainerLegacy adsorb-parent >
+    <DraggableContainerLegacy  >
       <Vue3DraggableResizable
           :initW="40"
           :initH="80"
@@ -203,11 +203,11 @@
 </template>
 
 <script setup lang="ts">
-import Vue3DraggableResizable from "./legacy/Vue3DraggableResizable";
-import DraggableResizable from "./components/DraggableResizable/index.vue";
-import {reactive} from "vue";
-import DraggableContainer from "@/components/DraggableContainer/index.vue";
+import Vue3DraggableResizable from "@/legacy/Vue3DraggableResizable";
 import DraggableContainerLegacy from '@/legacy/DraggableContainer'
+import {reactive} from "vue";
+import DraggableContainer from "@/vue/components/DraggableContainer/index.vue";
+import DraggableResizable from "@/vue/components/DraggableResizable/index.vue";
 
 const state = reactive({
   x: 100,
