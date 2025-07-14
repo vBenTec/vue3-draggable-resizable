@@ -1,16 +1,15 @@
 <script setup lang="ts">
 
-import {computed, inject, ref, Ref, toRef, useTemplateRef, onMounted, nextTick, watch, useId} from "vue";
+import {computed, ref, toRef, useTemplateRef, onMounted, watch, useId} from "vue";
 import {useParentSize} from "@/vue/composables/useParent";
-import {useResizeHandle} from "@/vue/composables/useResizeHandle";
 import {DraggableResizableProps} from "@/vue/components/DraggableResizable/types";
-import {useLimitSize} from "@/vue/composables/useLimitSize";
-import {useDraggableContainer} from "@/vue/composables/useDraggableContainer";
-import {ALL_HANDLES} from "@/legacy/Vue3DraggableResizable";
-import {ContainerProvider, GetPositionStore, ResizingHandle, SetMatchedLine, UpdatePosition} from "@/legacy/types";
-import {filterHandles, IDENTITY} from "@/utils";
+import {ALL_HANDLES} from "@/vue/components/DraggableResizable/handles";
+import {filterHandles} from "@/utils";
 import {useContainerProvider} from "@/vue/components/DraggableContainer/useContainerProvider";
-
+import {useDraggableContainer} from "@/vue/components/DraggableResizable/useDraggableContainer";
+import {useResizeHandle} from "@/vue/components/DraggableResizable/useResizeHandle";
+import {useLimitSize} from "@/vue/components/DraggableResizable/useLimitSize";
+import type {ResizingHandle} from './types'
 
 const props = withDefaults(defineProps<DraggableResizableProps>(), {
   handles: ALL_HANDLES,
@@ -90,24 +89,24 @@ const containerRef = useTemplateRef('container')
 
 const {parentHeight, parentWidth} = useParentSize(containerRef, {enabled: toRef(props, 'parent')})
 
-// useLimitSize({
-//   resizingMinHeight,
-//   resizingMinWidth,
-//   resizingMaxWidth,
-//   resizingMaxHeight,
-//   parentWidth,
-//   parentHeight,
-//   width,
-//   height,
-//   y,
-//   x
-// }, {
-//   useParent: props.parent,
-//   disabledH: props.disabledH,
-//   disabledW: props.disabledW,
-//   disabledY: props.disabledY,
-//   disabledX: props.disabledX,
-// })
+useLimitSize({
+  resizingMinHeight,
+  resizingMinWidth,
+  resizingMaxWidth,
+  resizingMaxHeight,
+  parentWidth,
+  parentHeight,
+  width,
+  height,
+  y,
+  x
+}, {
+  useParent: props.parent,
+  disabledH: props.disabledH,
+  disabledW: props.disabledW,
+  disabledY: props.disabledY,
+  disabledX: props.disabledX,
+})
 
 const {resizeHandleDown} = useResizeHandle(
     {
@@ -193,15 +192,6 @@ onMounted(() => {
   })
 
 })
-
-// defineExpose({
-//   containerRef,
-//   containerProvider,
-//   ...containerProps,
-//   ...parentSize,
-//   ...limitProps,
-//   resizeHandleDown
-// })
 </script>
 
 <template>

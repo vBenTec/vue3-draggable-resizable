@@ -1,14 +1,11 @@
 import {onMounted, onUnmounted, watch, Ref} from "vue";
-import {MatchedLine, ReferenceLineMap} from "@/legacy/types";
 // Assuming getReferenceLineMap is moved to utils
 import {addEvent, removeEvent, getReferenceLineMap} from "@/utils";
-import {useContainerProvider} from "@/components/DraggableContainer/useContainerProvider";
+import {useContainerProvider} from "@/vue/components/DraggableContainer/useContainerProvider";
+import {HandleEvent, ReferenceLineMap} from "@/vue/components/DraggableResizable/types";
+import {MatchedLine} from "@/vue/components/DraggableContainer/types";
+import {DOWN_HANDLES, MOVE_HANDLES, UP_HANDLES} from "@/vue/components/DraggableResizable/handles";
 
-const DOWN_HANDLES: (keyof HTMLElementEventMap)[] = ['mousedown', 'touchstart'];
-const UP_HANDLES: (keyof HTMLElementEventMap)[] = ['mouseup', 'touchend'];
-const MOVE_HANDLES: (keyof HTMLElementEventMap)[] = ['mousemove', 'touchmove'];
-
-type HandleEvent = MouseEvent | TouchEvent;
 
 function getPosition(e: HandleEvent) {
     if ('touches' in e) {
@@ -169,7 +166,7 @@ export const useDraggableContainer = (
         [lstPageX, lstPageY] = getPosition(e);
 
         if (containerProvider && !containerProvider.disabled?.value) {
-            referenceLineMap = getReferenceLineMap(containerProvider, { parentWidth, parentHeight }, id);
+            referenceLineMap = getReferenceLineMap(containerProvider, {parentWidth, parentHeight}, id);
         }
 
         addEvent(documentElement, MOVE_HANDLES, handleDrag);

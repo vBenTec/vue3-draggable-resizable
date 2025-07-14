@@ -1,8 +1,10 @@
-import {ContainerProvider, ParentSize, ReferenceLineMap, ResizingHandle} from "@/legacy/types";
-import {ALL_HANDLES} from "@/legacy/Vue3DraggableResizable";
-
-
-export const IDENTITY = Symbol('Vue3DraggableResizable')
+import {
+  ContainerProvider,
+  ParentSize,
+  ReferenceLineMap,
+  ResizingHandle
+} from "@/vue/components/DraggableResizable/types";
+import {ALL_HANDLES} from "@/vue/components/DraggableResizable/handles";
 
 export function getElSize(el: Element) {
   const style = window.getComputedStyle(el)
@@ -47,10 +49,6 @@ export function filterHandles(handles: ResizingHandle[]) {
   } else {
     return []
   }
-}
-
-export function getId() {
-  return String(Math.random()).substr(2) + String(Date.now())
 }
 
 export function getReferenceLineMap(

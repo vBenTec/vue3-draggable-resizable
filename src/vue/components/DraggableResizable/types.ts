@@ -1,4 +1,16 @@
-import {ResizingHandle} from "@/legacy/types";
+import {Position, PositionStore, SetMatchedLine} from "@/vue/components/DraggableContainer/types";
+import {Ref} from "vue";
+
+export type ResizingHandle =
+    | 'tl'
+    | 'tm'
+    | 'tr'
+    | 'ml'
+    | 'mr'
+    | 'bl'
+    | 'bm'
+    | 'br'
+    | ''
 
 
 export interface DraggableResizableProps {
@@ -21,4 +33,32 @@ export interface DraggableResizableProps {
     classNameActive?: string
     classNameHandle?: string
     lockAspectRatio?: boolean
+}
+
+export type ReferenceLineMap = Record<
+    'col' | 'row',
+    {
+        [propName: number]: Record<'min' | 'max' | 'value', number>
+    }
+>
+
+export type HandleEvent = MouseEvent | TouchEvent;
+
+export type UpdatePosition = (id: string, position: Position) => void
+
+export type GetPositionStore = (excludeId?: string) => PositionStore
+
+export interface ContainerProvider {
+    updatePosition: UpdatePosition
+    getPositionStore: GetPositionStore
+    setMatchedLine: SetMatchedLine
+    disabled: Ref<boolean>
+    adsorbParent: Ref<boolean>
+    adsorbCols: Ref<number[]>
+    adsorbRows: Ref<number[]>
+}
+
+export interface ParentSize {
+    parentWidth: Ref<number>
+    parentHeight: Ref<number>
 }

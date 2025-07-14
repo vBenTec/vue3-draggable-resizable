@@ -1,5 +1,5 @@
 import {inject, InjectionKey, provide, reactive, Ref} from "vue";
-import {GetPositionStore, MatchedLine, Position, PositionStore, SetMatchedLine, UpdatePosition} from "@/legacy/types";
+import {GetPositionStore, MatchedLine, Position, PositionStore, SetMatchedLine, UpdatePosition} from "./types";
 
 const CONTAINER_PROVIDER = Symbol('container-provider') as InjectionKey<{
     updatePosition: UpdatePosition
