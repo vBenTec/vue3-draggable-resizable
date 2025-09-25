@@ -7,7 +7,9 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   adsorbParent: true,
   referenceLineVisible: true,
-  referenceLineColor: '#f00'
+  referenceLineColor: '#f00',
+  adsorbCols: ()=> [],
+  adsorbRows: ()=> []
 })
 
 const {state} = provideContainer({

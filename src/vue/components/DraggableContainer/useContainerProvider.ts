@@ -4,7 +4,10 @@ import {ContainerProvider} from "@/vue/components/DraggableResizable/types";
 
 const CONTAINER_PROVIDER = Symbol('container-provider') as InjectionKey<ContainerProvider>
 
-export const provideContainer = (props: Pick<ContainerProvider, 'disabled' | 'adsorbParent' | 'adsorbCols' | 'adsorbRows'> ) => {
+export const provideContainer = (props: Pick<ContainerProvider, 'disabled' | 'adsorbParent' | 'adsorbCols' | 'adsorbRows'> & {
+    referenceLineVisible: Ref<boolean>
+    referenceLineColor: Ref<string>
+}  ) => {
     const positionStore = reactive<PositionStore>({})
 
     const updatePosition: UpdatePosition = (id: string, position: Position) => {
