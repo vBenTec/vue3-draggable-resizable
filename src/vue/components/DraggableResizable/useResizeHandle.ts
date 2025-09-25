@@ -1,12 +1,12 @@
-
-import { computed, onUnmounted, Ref } from "vue";
-import {addEvent, filterHandles, removeEvent} from "@/utils";
+import { computed, onUnmounted } from "vue";
+import {addEvent, filterHandles, removeEvent, getPositionFromEvent} from "@/utils";
 import {
     ResizingHandle,
     UseResizeHandleMethods, UseResizeHandleOptions,
     UseResizeHandleProps,
     UseResizeHandleState
 } from "@/vue/components/DraggableResizable/types";
+import { calculateResizeDelta } from "@/core/positioning";
 
 type HandleEvent = MouseEvent | TouchEvent;
 
@@ -14,7 +14,7 @@ type HandleEvent = MouseEvent | TouchEvent;
 const UP_HANDLES: (keyof HTMLElementEventMap)[] = ['mouseup', 'touchend'];
 const MOVE_HANDLES: (keyof HTMLElementEventMap)[] = ['mousemove', 'touchmove'];
 
-const getPosition = (e: HandleEvent) => 'touches' in e ? [e.touches[0].pageX, e.touches[0].pageY] : [e.pageX, e.pageY];
+const getPosition = (e: HandleEvent) => getPositionFromEvent(e);
 
 export const useResizeHandle = (
     props: UseResizeHandleProps,
@@ -32,7 +32,7 @@ export const useResizeHandle = (
         resizingMinWidth,
         resizingMinHeight
     } = state;
-    const { setWidth, setHeight, setLeft, setTop, emit } = methods;
+    const {  emit } = methods;
 
     let lstW = 0;
     let lstH = 0;
@@ -53,39 +53,33 @@ export const useResizeHandle = (
         let deltaY = _pageY - lstPageY;
 
         if (options.lockAspectRatio) {
-            const _deltaX = deltaX;
-            const _deltaY = deltaY;
-            deltaX = Math.abs(deltaX);
-            deltaY = deltaX * tmpAspectRatio;
-            if (verticalOrientation === 't') {
-                if (_deltaX < 0 || (horizontalOrientation === 'm' && _deltaY < 0)) {
-                    deltaX = -deltaX;
-                    deltaY = -deltaY;
-                }
-            } else {
-                if (_deltaX < 0 || (horizontalOrientation === 'm' && _deltaY < 0)) {
-                    deltaX = -deltaX;
-                    deltaY = -deltaY;
-                }
-            }
+            const deltas = calculateResizeDelta(
+                resizingHandle.value,
+                deltaX,
+                deltaY,
+                tmpAspectRatio,
+                true
+            );
+            deltaX = deltas.deltaX;
+            deltaY = deltas.deltaY;
         }
 
         if (verticalOrientation === 't') {
             const newHeight = Math.max(resizingMinHeight.value, Math.min(lstH - deltaY, resizingMaxHeight.value));
-            setHeight(newHeight);
-            setTop(lstY - (height.value - lstH));
+            height.value = newHeight;
+            y.value = lstY - (height.value - lstH);
         } else if (verticalOrientation === 'b') {
             const newHeight = Math.max(resizingMinHeight.value, Math.min(lstH + deltaY, resizingMaxHeight.value));
-            setHeight(newHeight);
+            height.value = newHeight;
         }
 
         if (horizontalOrientation === 'l') {
             const newWidth = Math.max(resizingMinWidth.value, Math.min(lstW - deltaX, resizingMaxWidth.value));
-            setWidth(newWidth);
-            setLeft(lstX - (width.value - lstW));
+            width.value = newWidth;
+            x.value = lstX - (width.value - lstW);
         } else if (horizontalOrientation === 'r') {
             const newWidth = Math.max(resizingMinWidth.value, Math.min(lstW + deltaX, resizingMaxWidth.value));
-            setWidth(newWidth);
+            width.value = newWidth;
         }
 
         emit('resizing', { x: x.value, y: y.value, w: width.value, h: height.value });

@@ -22,6 +22,7 @@
   - [Props](#props)
   - [Events](#events)
   - [Use adsorption alignment](#Use-adsorption-alignment)
+- [Architecture](#architecture)
 
 ### Features
 
@@ -652,3 +653,47 @@ reference line color
   </Vue3DraggableResizable>
 </DraggableContainer>
 ```
+
+## Architecture
+
+This library has been refactored to separate framework-agnostic core logic from Vue-specific implementations. This allows the core functionality to be reused in other frameworks like React, Angular, or vanilla JavaScript.
+
+### Core Logic
+
+The `src/core/` directory contains framework-agnostic utilities and logic:
+
+- **Types**: Common interfaces for positions, options, and constraints
+- **Utils**: DOM utilities, event handling, and handle filtering
+- **Positioning**: Size limits calculation and position constraining
+- **Reference Lines**: Snapping and alignment logic
+
+### Vue Implementation
+
+The `src/vue/` directory contains Vue 3 specific composables and components that use the core logic.
+
+### Using Core Logic in Other Frameworks
+
+The core logic can be extracted and used independently in any framework:
+
+```javascript
+import {
+  calculateSizeLimits,
+  constrainPosition,
+  getReferenceLineMap,
+  findMatchedLine
+} from './path/to/core'
+
+// Example: Basic draggable logic for any framework
+function makeDraggable(element, options) {
+  let position = { x: 0, y: 0, w: 100, h: 100 }
+  
+  const limits = calculateSizeLimits(options, parentWidth, parentHeight, position.x, position.y, position.w, position.h)
+  const constrained = constrainPosition(newX, newY, position.w, position.h, limits, options)
+  
+  // Apply constrained position
+  element.style.left = constrained.x + 'px'
+  element.style.top = constrained.y + 'px'
+}
+```
+
+This architecture makes it easy to create draggable/resizable components for any framework while maintaining consistent behavior and features.

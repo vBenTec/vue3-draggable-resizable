@@ -1,5 +1,5 @@
 import {onMounted, onUnmounted, watch, Ref} from "vue";
-import {addEvent, removeEvent, getReferenceLineMap} from "@/utils";
+import {addEvent, removeEvent, getReferenceLineMap, getPositionFromEvent} from "@/utils";
 import {useContainerProvider} from "@/vue/components/DraggableContainer/useContainerProvider";
 import {
     DraggableContainerOptions,
@@ -8,17 +8,11 @@ import {
     HandleEvent,
     ReferenceLineMap
 } from "@/vue/components/DraggableResizable/types";
-import {MatchedLine} from "@/vue/components/DraggableContainer/types";
 import {DOWN_HANDLES, MOVE_HANDLES, UP_HANDLES} from "@/vue/components/DraggableResizable/handles";
+import { findMatchedLine } from "@/core/reference-lines";
 
 
-const getPosition = (e: HandleEvent)=> {
-    if ('touches' in e) {
-        return [e.touches[0].pageX, e.touches[0].pageY];
-    } else {
-        return [e.pageX, e.pageY];
-    }
-}
+const getPosition = (e: HandleEvent)=> getPositionFromEvent(e);
 
 export const useDraggableContainer = (
     props: DraggableContainerProps,
@@ -86,49 +80,19 @@ export const useDraggableContainer = (
                 col: [newLeft, newLeft + w.value / 2, newLeft + w.value],
                 row: [newTop, newTop + h.value / 2, newTop + h.value]
             }
-            const matchedLine: unknown = {
-                row: widgetSelfLine.row
-                    .map((i, index) => {
-                        let match = null
-                        Object.values(referenceLineMap!.row).forEach((referItem) => {
-                            if (i >= referItem.min && i <= referItem.max) {
-                                match = referItem.value
-                            }
-                        })
-                        if (match !== null) {
-                            if (index === 0) {
-                                newTop = match
-                            } else if (index === 1) {
-                                newTop = Math.floor(match - h.value / 2)
-                            } else if (index === 2) {
-                                newTop = Math.floor(match - h.value)
-                            }
-                        }
-                        return match
-                    })
-                    .filter((i) => i !== null),
-                col: widgetSelfLine.col
-                    .map((i, index) => {
-                        let match = null
-                        Object.values(referenceLineMap!.col).forEach((referItem) => {
-                            if (i >= referItem.min && i <= referItem.max) {
-                                match = referItem.value
-                            }
-                        })
-                        if (match !== null) {
-                            if (index === 0) {
-                                newLeft = match
-                            } else if (index === 1) {
-                                newLeft = Math.floor(match - w.value / 2)
-                            } else if (index === 2) {
-                                newLeft = Math.floor(match - w.value)
-                            }
-                        }
-                        return match
-                    })
-                    .filter((i) => i !== null)
+            const matchedLine = findMatchedLine(referenceLineMap, widgetSelfLine, { width: w.value, height: h.value })
+
+            if (matchedLine.snappedX !== undefined) {
+                newLeft = matchedLine.snappedX
             }
-            containerProvider!.setMatchedLine(matchedLine as MatchedLine)
+            if (matchedLine.snappedY !== undefined) {
+                newTop = matchedLine.snappedY
+            }
+
+            containerProvider?.setMatchedLine({
+                row: matchedLine.row,
+                col: matchedLine.col
+            })
         }
 
         x.value = newLeft;

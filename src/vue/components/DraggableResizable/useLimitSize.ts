@@ -1,4 +1,6 @@
 import {computed, ComputedRef, Ref} from "vue";
+import { calculateSizeLimits, constrainPosition } from "@/core/positioning";
+import { DraggableOptions } from "@/core/types";
 
 export const useLimitSize = (
     sizeValues: {
@@ -19,66 +21,93 @@ export const useLimitSize = (
         disabledH: boolean
         disabledY: boolean
         disabledX: boolean
+        minW?: number
+        minH?: number
+        maxW?: number
+        maxH?: number
     }
 ) => {
-    const limitProps = {
-        minWidth: computed(() => sizeValues.resizingMinWidth.value),
-        minHeight: computed(() => sizeValues.resizingMinHeight.value),
-        maxWidth: computed(() =>
-            options.useParent
-                ? Math.min(sizeValues.parentWidth.value as number, sizeValues.resizingMaxWidth.value)
-                : Infinity
-        ),
-        maxHeight: computed(() =>
-            options.useParent
-                ? Math.min(sizeValues.parentHeight.value as number, sizeValues.resizingMaxHeight.value)
-                : Infinity
-        ),
-        minLeft: computed(() => options.useParent ? 0 : -Infinity),
-        minTop: computed(() => options.useParent ? 0 : -Infinity),
-        maxLeft: computed(() => options.useParent ? sizeValues.parentWidth.value as number - sizeValues.x.value : Infinity),
-        maxTop: computed(() => options.useParent ? sizeValues.parentHeight.value as number - sizeValues.height.value : Infinity)
+    const draggableOptions: DraggableOptions = {
+        parent: options.useParent,
+        disabledW: options.disabledW,
+        disabledH: options.disabledH,
+        disabledX: options.disabledX,
+        disabledY: options.disabledY,
+        minW: options.minW,
+        minH: options.minH,
+        maxW: options.maxW,
+        maxH: options.maxH
     }
+
+    const limitProps = computed(() => calculateSizeLimits(
+        draggableOptions,
+        sizeValues.parentWidth.value,
+        sizeValues.parentHeight.value,
+        sizeValues.width.value,
+        sizeValues.height.value
+    ))
 
     const limitMethods = {
         setWidth(val: number) {
             if (options.disabledW) return sizeValues.width.value
 
-            sizeValues.width.value = Math.min(
-                limitProps.maxWidth.value,
-                Math.max(limitProps.minWidth.value, val)
+            const constrained = constrainPosition(
+                sizeValues.x.value,
+                sizeValues.y.value,
+                val,
+                sizeValues.height.value,
+                limitProps.value,
+                draggableOptions
             )
 
+            sizeValues.width.value = constrained.w
             return sizeValues.width.value
         },
         setHeight(val: number) {
             if (options.disabledH) return sizeValues.height.value
 
-            sizeValues.height.value = Math.min(
-                limitProps.maxHeight.value,
-                Math.max(limitProps.minHeight.value, val)
+            const constrained = constrainPosition(
+                sizeValues.x.value,
+                sizeValues.y.value,
+                sizeValues.width.value,
+                val,
+                limitProps.value,
+                draggableOptions
             )
 
+            sizeValues.height.value = constrained.h
             return sizeValues.height.value
         },
         setTop(val: number) {
             if (options.disabledY) {
                 return sizeValues.y.value
             }
-            sizeValues.y.value = Math.min(
-                limitProps.maxTop.value,
-                Math.max(limitProps.minTop.value, val)
+
+            const constrained = constrainPosition(
+                sizeValues.x.value,
+                val,
+                sizeValues.width.value,
+                sizeValues.height.value,
+                limitProps.value,
+                draggableOptions
             )
+
+            sizeValues.y.value = constrained.y
             return sizeValues.y.value
         },
         setLeft(val: number) {
             if (options.disabledX) return sizeValues.x.value
 
-            sizeValues.x.value = Math.min(
-                limitProps.maxLeft.value,
-                Math.max(limitProps.minLeft.value, val)
+            const constrained = constrainPosition(
+                val,
+                sizeValues.y.value,
+                sizeValues.width.value,
+                sizeValues.height.value,
+                limitProps.value,
+                draggableOptions
             )
 
+            sizeValues.x.value = constrained.x
             return sizeValues.x.value
         }
     }
