@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import {computed, toRef} from "vue";
 import {provideContainer} from "@/vue/components/DraggableContainer/useContainerProvider";
-
-interface Props {
-  disabled?: boolean;
-  adsorbParent?: boolean
-  adsorbCols?: number[]
-  adsorbRows?: number[]
-  referenceLineVisible?: boolean
-  referenceLineColor?: string
-}
+import type {Props} from "@/vue/components/DraggableContainer/types";
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
@@ -64,5 +56,4 @@ const matchedCols = computed(
   height: 100%;
   position: relative;
 }
-
 </style>

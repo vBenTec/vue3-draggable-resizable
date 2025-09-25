@@ -22,63 +22,63 @@
     </div>
     <div>active:{{ state.active }}<br/></div>
 
-    <DraggableContainerLegacy>
-      <Vue3DraggableResizable
-          :initW="40"
-          :initH="80"
-          v-model:x="state.x"
-          v-model:y="state.y"
-          v-model:w="state.w"
-          v-model:h="state.h"
-          v-model:active="state.active"
-          :draggable="true"
-          :resizable="true"
-          :disabledX="false"
-          :disabledW="false"
-          :disabledH="false"
-          :disabledY="false"
-          :lockAspectRatio="true"
-          classNameHandle="my-handle"
-          @activated="print('activated')"
-          @deactivated="print('deactivated')"
-          @drag-start="print('drag-start', $event)"
-          @resize-start="print('resize-start', $event)"
-          @dragging="print('dragging', $event)"
-          @resizing="print('resizing', $event)"
-          @drag-end="print('drag-end', $event)"
-          @resize-end="print('resize-end', $event)"
-      >
-        This is a test example
-      </Vue3DraggableResizable>
+<!--    <DraggableContainerLegacy>-->
+<!--      <Vue3DraggableResizable-->
+<!--          :initW="40"-->
+<!--          :initH="80"-->
+<!--          v-model:x="state.x"-->
+<!--          v-model:y="state.y"-->
+<!--          v-model:w="state.w"-->
+<!--          v-model:h="state.h"-->
+<!--          v-model:active="state.active"-->
+<!--          :draggable="true"-->
+<!--          :resizable="true"-->
+<!--          :disabledX="false"-->
+<!--          :disabledW="false"-->
+<!--          :disabledH="false"-->
+<!--          :disabledY="false"-->
+<!--          :lockAspectRatio="true"-->
+<!--          classNameHandle="my-handle"-->
+<!--          @activated="print('activated')"-->
+<!--          @deactivated="print('deactivated')"-->
+<!--          @drag-start="print('drag-start', $event)"-->
+<!--          @resize-start="print('resize-start', $event)"-->
+<!--          @dragging="print('dragging', $event)"-->
+<!--          @resizing="print('resizing', $event)"-->
+<!--          @drag-end="print('drag-end', $event)"-->
+<!--          @resize-end="print('resize-end', $event)"-->
+<!--      >-->
+<!--        This is a test example-->
+<!--      </Vue3DraggableResizable>-->
 
-      <Vue3DraggableResizable
-          :initW="40"
-          :initH="80"
-          :x="20"
-          :y="40"
-          v-model:w="state.w"
-          v-model:h="state.h"
-          v-model:active="state.active"
-          :draggable="true"
-          :resizable="true"
-          :disabledX="false"
-          :disabledW="false"
-          :disabledH="false"
-          :disabledY="false"
-          :lockAspectRatio="true"
-          classNameHandle="my-handle"
-          @activated="print('activated')"
-          @deactivated="print('deactivated')"
-          @drag-start="print('drag-start', $event)"
-          @resize-start="print('resize-start', $event)"
-          @dragging="print('dragging', $event)"
-          @resizing="print('resizing', $event)"
-          @drag-end="print('drag-end', $event)"
-          @resize-end="print('resize-end', $event)"
-      >
-        This is a test example
-      </Vue3DraggableResizable>
-    </DraggableContainerLegacy>
+<!--      <Vue3DraggableResizable-->
+<!--          :initW="40"-->
+<!--          :initH="80"-->
+<!--          :x="20"-->
+<!--          :y="40"-->
+<!--          v-model:w="state.w"-->
+<!--          v-model:h="state.h"-->
+<!--          v-model:active="state.active"-->
+<!--          :draggable="true"-->
+<!--          :resizable="true"-->
+<!--          :disabledX="false"-->
+<!--          :disabledW="false"-->
+<!--          :disabledH="false"-->
+<!--          :disabledY="false"-->
+<!--          :lockAspectRatio="true"-->
+<!--          classNameHandle="my-handle"-->
+<!--          @activated="print('activated')"-->
+<!--          @deactivated="print('deactivated')"-->
+<!--          @drag-start="print('drag-start', $event)"-->
+<!--          @resize-start="print('resize-start', $event)"-->
+<!--          @dragging="print('dragging', $event)"-->
+<!--          @resizing="print('resizing', $event)"-->
+<!--          @drag-end="print('drag-end', $event)"-->
+<!--          @resize-end="print('resize-end', $event)"-->
+<!--      >-->
+<!--        This is a test example-->
+<!--      </Vue3DraggableResizable>-->
+<!--    </DraggableContainerLegacy>-->
 
 
     <h2>New Stack</h2>

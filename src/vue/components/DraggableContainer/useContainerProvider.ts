@@ -1,22 +1,10 @@
 import {inject, InjectionKey, provide, reactive, Ref} from "vue";
 import {GetPositionStore, MatchedLine, Position, PositionStore, SetMatchedLine, UpdatePosition} from "./types";
+import {ContainerProvider} from "@/vue/components/DraggableResizable/types";
 
-const CONTAINER_PROVIDER = Symbol('container-provider') as InjectionKey<{
-    updatePosition: UpdatePosition
-    getPositionStore: GetPositionStore
-    setMatchedLine: SetMatchedLine
-    disabled?: Ref<boolean>
-    adsorbParent?: Ref<boolean>
-    adsorbCols?: number[]
-    adsorbRows?: number[]
-}>
+const CONTAINER_PROVIDER = Symbol('container-provider') as InjectionKey<ContainerProvider>
 
-export const provideContainer = (props: {
-    disabled?: Ref<boolean>
-    absorbParent?: Ref<boolean>
-    adsorbCols?: number[]
-    adsorbRows?: number[]
-}) => {
+export const provideContainer = (props: Pick<ContainerProvider, 'disabled' | 'adsorbParent' | 'adsorbCols' | 'adsorbRows'> ) => {
     const positionStore = reactive<PositionStore>({})
 
     const updatePosition: UpdatePosition = (id: string, position: Position) => {
@@ -48,7 +36,7 @@ export const provideContainer = (props: {
         getPositionStore,
         setMatchedLine,
         disabled: props.disabled,
-        adsorbParent: props.absorbParent,
+        adsorbParent: props.adsorbParent,
         adsorbCols: props.adsorbCols,
         adsorbRows: props.adsorbRows,
     })

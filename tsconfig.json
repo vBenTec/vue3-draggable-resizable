@@ -11,7 +11,9 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "emitDeclarationOnly": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./dist/types",
     "composite": true,
     "paths": {
       "@/*": [
@@ -19,8 +21,8 @@
       ]
     },
     "lib": [
-      "esnext",
-      "dom",
+      "ESNext",
+      "DOM",
       "dom.iterable",
       "scripthost"
     ]
@@ -39,6 +41,7 @@
     "vite.config.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }

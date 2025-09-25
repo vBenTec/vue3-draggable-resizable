@@ -64,7 +64,6 @@ const resizingMinHeight = ref<number>(props.minH)
 const dragging = ref(false)
 const resizing = ref(false)
 
-
 const aspectRatio = computed(() => height.value / width.value)
 
 const setWidth = (value: number) => {

@@ -1,42 +1,23 @@
 import {onMounted, onUnmounted, watch, Ref} from "vue";
-// Assuming getReferenceLineMap is moved to utils
 import {addEvent, removeEvent, getReferenceLineMap} from "@/utils";
 import {useContainerProvider} from "@/vue/components/DraggableContainer/useContainerProvider";
-import {HandleEvent, ReferenceLineMap} from "@/vue/components/DraggableResizable/types";
+import {
+    DraggableContainerOptions,
+    DraggableContainerProps,
+    DraggableContainerState,
+    HandleEvent,
+    ReferenceLineMap
+} from "@/vue/components/DraggableResizable/types";
 import {MatchedLine} from "@/vue/components/DraggableContainer/types";
 import {DOWN_HANDLES, MOVE_HANDLES, UP_HANDLES} from "@/vue/components/DraggableResizable/handles";
 
 
-function getPosition(e: HandleEvent) {
+const getPosition = (e: HandleEvent)=> {
     if ('touches' in e) {
         return [e.touches[0].pageX, e.touches[0].pageY];
     } else {
         return [e.pageX, e.pageY];
     }
-}
-
-interface DraggableContainerProps {
-    x: Ref<number>;
-    y: Ref<number>;
-    w: Ref<number>;
-    h: Ref<number>;
-}
-
-interface DraggableContainerState {
-    container: Ref<HTMLElement | undefined>;
-    active: Ref<boolean>;
-    dragging: Ref<boolean>;
-    resizing: Ref<boolean>;
-    handles: Ref<string>;
-    id: string
-}
-
-interface DraggableContainerOptions {
-    draggable: Ref<boolean>;
-    emit: (event: string, ...args: any[]) => void;
-    parent: boolean;
-    parentWidth: Ref<number>;
-    parentHeight: Ref<number>;
 }
 
 export const useDraggableContainer = (

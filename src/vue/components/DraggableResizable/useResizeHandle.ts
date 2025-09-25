@@ -1,51 +1,20 @@
 
 import { computed, onUnmounted, Ref } from "vue";
 import {addEvent, filterHandles, removeEvent} from "@/utils";
-import {ResizingHandle} from "@/vue/components/DraggableResizable/types";
+import {
+    ResizingHandle,
+    UseResizeHandleMethods, UseResizeHandleOptions,
+    UseResizeHandleProps,
+    UseResizeHandleState
+} from "@/vue/components/DraggableResizable/types";
 
 type HandleEvent = MouseEvent | TouchEvent;
 
-const DOWN_HANDLES: (keyof HTMLElementEventMap)[] = ['mousedown', 'touchstart'];
+// const DOWN_HANDLES: (keyof HTMLElementEventMap)[] = ['mousedown', 'touchstart'];
 const UP_HANDLES: (keyof HTMLElementEventMap)[] = ['mouseup', 'touchend'];
 const MOVE_HANDLES: (keyof HTMLElementEventMap)[] = ['mousemove', 'touchmove'];
 
 const getPosition = (e: HandleEvent) => 'touches' in e ? [e.touches[0].pageX, e.touches[0].pageY] : [e.pageX, e.pageY];
-
-interface UseResizeHandleProps {
-    width: Ref<number>;
-    height: Ref<number>;
-    x: Ref<number>;
-    y: Ref<number>;
-    aspectRatio: Ref<number>;
-    parentWidth: Ref<number>;
-    parentHeight: Ref<number>;
-    minH: Ref<number>;
-    minW: Ref<number>;
-}
-
-interface UseResizeHandleState {
-    resizing: Ref<boolean>;
-    handles: Ref<ResizingHandle[]>;
-    resizingHandle: Ref<ResizingHandle>;
-    resizingMaxWidth: Ref<number>;
-    resizingMaxHeight: Ref<number>;
-    resizingMinWidth: Ref<number>;
-    resizingMinHeight: Ref<number>;
-}
-
-interface UseResizeHandleMethods {
-    setWidth: (val: number) => number;
-    setHeight: (val: number) => number;
-    setLeft: (val: number) => number;
-    setTop: (val: number) => number;
-    emit: (event: string, ...args: any[]) => void;
-}
-
-interface UseResizeHandleOptions {
-    lockAspectRatio: boolean;
-    resizable: boolean;
-    parent: boolean;
-}
 
 export const useResizeHandle = (
     props: UseResizeHandleProps,

@@ -16,7 +16,15 @@ export interface MatchedLine {
     col: number[]
 }
 
-
 export type SetMatchedLine = (matchedLine: MatchedLine | null) => void
 
 export type UpdatePosition = (id: string, position: Position) => void
+
+export interface Props {
+    disabled?: boolean;
+    adsorbParent?: boolean
+    adsorbCols?: number[]
+    adsorbRows?: number[]
+    referenceLineVisible?: boolean
+    referenceLineColor?: string
+}
